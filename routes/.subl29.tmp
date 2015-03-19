@@ -1,0 +1,72 @@
+var express = require('express')
+  , router = express.Router()
+  , passport = require('passport')
+  , models = require('./db');
+
+var get = router.get = {}
+  , post = router.post = {}
+  , $ = {
+    db : "",
+    passport: ""
+  };
+
+// -----------------------------------------------------------
+// Get
+// -----------------------------------------------------------
+get.index = function(req, res) {
+	res.render('index', { title: 'Index' , message: req.flash('message')});
+};
+
+get.home = function(req, res) {
+    models.User.findById(req.user._id, function(err, user) {
+        if(err) res.send(err);
+        res.render('home', {
+            title: 'home',
+            user: user
+        });
+    });
+    
+}
+
+get.register = function(req, res) {
+	res.render('register', { title: 'Register' , message: req.flash('message')});
+};
+
+get.logoff = function(req, res) {
+    req.logout();
+    res.redirect('/');
+}
+
+get.rgs = function(req, res) {
+	
+}
+// -----------------------------------------------------------
+// Post
+// -----------------------------------------------------------
+post.login = passport.authenticate('login', {
+    successRedirect: '/home',
+    failureRedirect: '/',
+    failureFlash: true
+});
+
+post.register = passport.authenticate('register', {
+    successRedirect: '/home',
+    failureRedirect: '/register',
+    failureFlash: true
+});
+
+
+// -----------------------------------------------------------
+// Other
+// -----------------------------------------------------------
+router.configure = function(callback) {
+    callback();
+}
+
+router.set = function(prop, value) {
+    $[prop] = value;
+}
+
+
+
+module.exports = router;

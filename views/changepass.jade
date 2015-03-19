@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    h1.title Enter new password
+        div.container
+            form(class='form-changepass', action='/changepass', method='POST')
+                input(type='password', name='password' class='form-control', placeholder='Password',required, autofocus)
+                input(type='password', name='passwordc' class='form-control', placeholder='Confirm Password', required)
+                button(class='btn btn-lg btn-primary btn-block', type='submit') Submit
+        a(href='/register', class='text-center new-account') Create an account

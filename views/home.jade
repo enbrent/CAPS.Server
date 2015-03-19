@@ -1,0 +1,29 @@
+extends layout-home
+
+block content
+    div.ui.large.menu
+        div.header.item CAPS
+        a.active.item(href='/home') Home
+        a.item(href='/home') About
+        div.right.menu
+            div.text.item #{user.firstName} #{user.lastName}
+            a.item(href='/logoff')
+                <i class="sign out icon"></i>
+    div.container(style='width:650px; position:relative; margin:0px auto' id='info')
+        div.column.three.wide
+            div.ui.top.attached.tabular.menu.three.item
+                div.active.item(data-tab="sensor") Sensors
+                div.item(data-tab="alert") Alerts
+                div.item(data-tab="accnt") Account
+            div.ui.bottom.attached.active.tab.segment(data-tab="sensor" id="sensorTab")
+                form.ui.form(id='updateSensorForm' method='POST' action='/changepriority')
+            div.ui.bottom.attached.tab.segment(data-tab="alert")
+                p Maybe later
+            div.ui.bottom.attached.tab.segment(data-tab="accnt")
+                p Name: #{user.firstName} #{user.lastName}
+                p Email: #{user.email}
+                p Password: #{user.password}
+                p Device Number: #{user.deviceNumber}
+    script(type='text/javascript').
+        var userData = !{JSON.stringify(user)};
+        var deviceData = !{JSON.stringify(device)};

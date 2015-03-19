@@ -1,0 +1,27 @@
+extends layout
+
+block content
+    div.ui.one.column.centered.grid(style='position:relative; top:50%; transform:translateY(-50%);')
+        div.column.six.wide(style='min-width:500px')
+            form.ui.attached.fluid.segment.form(action='/register' method='POST' id='registerForm')
+                h1(class='ui center aligned header') Create an account
+                div.field
+                    label Email
+                    input(name='email' placeholder='Email' type='email')
+                div.field
+                    label Password
+                    input(name='password' placeholder='Password' type='password')
+                div.two.fields
+                    div.field
+                        label First Name
+                        input(name='firstName' placeholder='First Name' type='text')
+                    div.field
+                        label Last Name
+                        input(name='lastName' placeholder='Last Name')
+                div.field
+                    label Device Number
+                    input(name='deviceNumber' placeholder='Device Number' type='text')
+                input.ui.fluid.button(type='submit' value='Register')
+            div.ui.bottom.attached.message            
+                p(style='text-align:center; font-size:13px')
+                    a(href='/') Already registered? Login here

@@ -1,0 +1,9 @@
+extends layout
+
+block content
+    div.confirmtoken
+        form(name="confirm-token", action="/genconfirm")
+            button#btnSubmit(type="submit") Generate confirm token
+    div.confirmtoken
+        form(name="reset-token", action="/genreset")
+            button#btnSubmit(type="submit") Generate reset token

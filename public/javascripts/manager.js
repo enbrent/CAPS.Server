@@ -27,8 +27,24 @@ $(document).ready(function() {
 	// Initialize tab menu
 	$('.ui.top.attached.tabular.menu.three.item .item').tab();
 
-	// Create sensors
-	createSensorList();
+	console.log(deviceData);
+
+	// Check if data is activated.
+	if(deviceData.isActivated) {
+		createSensorList();		
+	} else {
+		// Inform that device not activated.
+		var msg = createDiv('ui negative message');
+		var hdr = createDiv('header');
+		hdr.innerHTML = 'Device Not Activated'
+		var content = document.createElement('p');
+		content.innerHTML = 'Please press the reset button on the device and refresh the page.';
+
+		msg.appendChild(hdr);
+		msg.appendChild(content);
+		document.getElementById('updateSensorForm').appendChild(msg);
+	}
+
 
 	// Initialize dropdown priorities for sensors
 	$('.dropdown').dropdown({
@@ -162,6 +178,7 @@ function createDropdown(sensorCount, defaultPriority) {
 	uiDropdown.appendChild(menu);
 	return uiDropdown;
 }
+
 
 // Create a div element with a className
 function createDiv(className) {

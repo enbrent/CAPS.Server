@@ -79,6 +79,7 @@ module.exports = function(passport, LocalStrategy) {
                         newDevice.deviceNumber = req.param('deviceNumber');
                         newDevice.sensors = {};
                         newDevice.priorities = {};
+                        newDevice.isActivated = false;
 
                         // Save device to db.
                         newDevice.save(function(err) {

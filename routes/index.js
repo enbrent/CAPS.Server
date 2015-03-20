@@ -228,6 +228,7 @@ get.rgs = function(req, res) {
         // Update device document in db.
         device.sensors = sensors;
         device.priorities = priorities;
+        device.isActivated = true;
         device.save(function(err) {
             if(err) return res.send('Error on updating device');
         })

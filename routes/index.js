@@ -25,7 +25,7 @@ get.debug = function(req, res) {
 
 
 get.index = function(req, res) {
-	res.render('index', { title: 'Index' , message: req.flash('message')});
+	res.render('index', { title: 'CAPS Login' , message: req.flash('message')});
 };
 
 get.home = function(req, res) {
@@ -34,7 +34,7 @@ get.home = function(req, res) {
         models.Device.findById(user.deviceId, function(err, device) {
             if(err) return res.send(err);
             res.render('home', {
-                title: 'home',
+                title: 'CAPS Manager',
                 user: user,
                 device: device
             });
@@ -43,7 +43,7 @@ get.home = function(req, res) {
 }
 
 get.register = function(req, res) {
-	res.render('register', { title: 'Register' , message: req.flash('message')});
+	res.render('register', { title: 'CAPS Registration' , message: req.flash('message')});
 };
 
 // Might change this later to a post

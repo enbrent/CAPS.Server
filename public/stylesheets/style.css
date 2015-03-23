@@ -5,3 +5,7 @@ a {
 div.ui.bottom.attached.active.tab.segment {
 	width: inherit;
 }
+
+.ui.menu .item {
+    font-size: 13px;
+}

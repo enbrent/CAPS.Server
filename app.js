@@ -23,7 +23,8 @@ db.once('open', function(callback) {
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , session = require('express-session')
-  , mongostore = require('connect-mongo')(session);
+  , mongostore = require('connect-mongo')(session)
+  , scribe = require('scribe-js')();
 
 var app = express();
 
@@ -32,7 +33,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(favicon());
-app.use(logger('dev'));
+//app.use(logger('dev'));
+app.use(scribe.express.logger());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());

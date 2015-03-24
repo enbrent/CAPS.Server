@@ -24,6 +24,7 @@
     "passport-local" : "*",
     "connect-flash": "*",
     "shortid" : "*",
-    "nodemailer" : "*"
+    "nodemailer" : "*",
+    "scribe-js" : "*"
   }
 }

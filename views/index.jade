@@ -3,6 +3,8 @@ extends layout
 block content
     div.ui.one.column.centered.grid(style='position:relative; top:50%; transform:translateY(-50%);')
         div.column.four.wide(id='loginPage' style='min-width:330px')
+            //- div.ui.message
+            //-     div.header(style='text-align:center') #{message}
             form.ui.attached.fluid.segment.form(action='/login' method='POST' id='loginForm')
                 h1(class='ui center aligned header') CAPS Device
                 div.field
@@ -19,5 +21,19 @@ block content
                     a(href='/register') Create an account
             p(style='text-align:center; font-size:11px; font-style:italic;')
                     a(href='/register') Forgot your password?
+            script(type='text/javascript').
+                var errorMessage = !{JSON.stringify(message)};
+                if(errorMessage.length > 0) {
+                    var error = document.createElement('div');
+                    error.className = 'ui negative message';
+                    var p = document.createElement('p');
+                    p.innerHTML = errorMessage;
+                    p.style.textAlign = 'center';
+                    error.appendChild(p);
+                    var loginForm = document.getElementById('loginForm');
+                    loginForm.insertBefore(error, loginForm.children[1]);
+                }   
+
+            
                 
 

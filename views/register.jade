@@ -25,3 +25,15 @@ block content
             div.ui.bottom.attached.message            
                 p(style='text-align:center; font-size:13px')
                     a(href='/') Already registered? Login here
+            script(type='text/javascript').
+                var errorMessage = !{JSON.stringify(message)};
+                if(errorMessage.length > 0) {
+                    var error = document.createElement('div');
+                    error.className = 'ui negative message';
+                    var p = document.createElement('p');
+                    p.innerHTML = errorMessage;
+                    p.style.textAlign = 'center';
+                    error.appendChild(p);
+                    var registerForm = document.getElementById('registerForm');
+                    registerForm.insertBefore(error, registerForm.children[1]);
+                }   

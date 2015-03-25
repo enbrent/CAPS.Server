@@ -30,10 +30,10 @@ module.exports = function(passport, LocalStrategy) {
                     if(err) return returnCall('Error in finding user:login', done(err));
                     if(!user) {
                         return returnCall('User Not found with email ' + username,
-                            done(null, false, req.flash('message', 'User not found')));
+                            done(null, false, req.flash('message', 'Invalid email/password combination')));
                     }
                     if(!isValidPassword(user, password)) { // Password isn't encrypted
-                        return returnCall('Invalid Password', done(null, false, req.flash('message', 'Invalid password')));
+                        return returnCall('Invalid Password', done(null, false, req.flash('message', 'Invalid email/password combination')));
                     }
                     // Matching email and password. Login success.
                     // Delete password field.
@@ -71,7 +71,7 @@ module.exports = function(passport, LocalStrategy) {
                     }
                     // Already exists.
                     if(user) {
-                        return returnCall('User already exists', done(null, false, req.flash('message', 'User already exists')));
+                        return returnCall('User already exists', done(null, false, req.flash('message', 'Email already registered')));
                     } else {
 
                         // Doesn't exist yet. Create new device and user.

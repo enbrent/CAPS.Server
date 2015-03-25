@@ -260,12 +260,14 @@ get.alert = function(req, res) {
         models.User.findOne({'deviceNumber':deviceNumber}, function(err, user) {
             if(err) return res.send('Error in finding user');
             if(!user) return res.send('User not found');
-            // Get sensor name
-            var sensor = device.sensors[req.query.sensor];
+            // Get sensor name and priority
+            var sensor = device.sensors[req.query.sensor]
+              , priority = device.priorities[sensor];
+            if(!sensor) return res.send('Error in getting sensor');
+            if(priority <= 0) return res.send('Sensor does not exist/turned off');
             message = 'This is a CAPS Device alert. Your ' + sensor +' sensor has picked up something inside your car.';
             transmitter.sendAlertText(user.phoneNumber, message);
-            // transmitter.sendAlertText('8037955532', 'Hi there');
-            res.send(0);
+            res.send('Text message sent');
         });
         
     });

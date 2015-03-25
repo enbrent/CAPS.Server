@@ -72,6 +72,7 @@ app.get('/register', routes.get.register);
 app.get('/reset/*', routes.get.reset);
 app.get('/resetpass', routes.get.resetpass);
 app.get('/logoff', routes.get.logoff);
+app.get('/textin', routes.get.textin);
 app.post('/login', routes.post.login);
 app.post('/register', routes.post.register);
 app.post('/changepass', routes.post.changepass);

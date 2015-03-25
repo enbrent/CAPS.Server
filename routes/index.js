@@ -103,6 +103,12 @@ get.verify = function(req, res) {
     res.send('verify');
 }
 
+get.textin = function(req, res) {
+    res.type('text/xml');
+    console.log('text message received');
+    res.send('<Response><Say>Hello there! Thanks for calling.</Say></Response>');
+}
+
 // -----------------------------------------------------------
 // Debug functions
 // -----------------------------------------------------------
@@ -272,7 +278,6 @@ get.alert = function(req, res) {
         
     });
 }
-
 // -----------------------------------------------------------
 // Post
 // -----------------------------------------------------------

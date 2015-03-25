@@ -7,6 +7,7 @@ var userSchema = new Schema({
     password : String,
     firstName : String,
     lastName : String,
+    phoneNumber : Number,
     deviceId : ObjectId,
     deviceNumber: String // may be directed to another schema later. Board schema.
 });

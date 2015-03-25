@@ -3,7 +3,7 @@ var express = require('express')
   , passport = require('passport')
   , models = require('./db')
   , toolkit = require('./toolkit')
-  , emailer = require('./emailer')
+  , transmitter = require('./transmitter')
   , shortId = require('shortid');
 
 var mongoose = require('mongoose')
@@ -64,7 +64,7 @@ get.resetpass = function(req, res) {
         if(err) return res.send(err);
     })
 
-    emailer.sendResetPasswordEmail(email, resetToken)
+    transmitter.sendResetPasswordEmail(email, resetToken)
 
     res.render('redirect', { message: "Reset password email sent!" });
 }
@@ -247,19 +247,30 @@ get.rgs = function(req, res) {
     });
 };
 
+/*********************
+ QUERY: localhost/alert?id=capsdevicetest&sensor=s0
+********************/
+get.alert = function(req, res) {
+    // Check if board is registered
+    var deviceNumber = req.query.id;
+    models.Device.findOne({'deviceNumber':deviceNumber}, function(err, device) {
+        if(err) return res.send('Error in finding registered device');
+        if(!device) return res.send('Device not registered');
+        // Get the phone number from user.
+        models.User.findOne({'deviceNumber':deviceNumber}, function(err, user) {
+            if(err) return res.send('Error in finding user');
+            if(!user) return res.send('User not found');
+            // Get sensor name
+            var sensor = device.sensors[req.query.sensor];
+            message = 'This is a CAPS Device alert. Your ' + sensor +' sensor has picked up something inside your car.';
+            transmitter.sendAlertText(user.phoneNumber, message);
+            // transmitter.sendAlertText('8037955532', 'Hi there');
+            res.send(0);
+        });
+        
+    });
+}
 
-
-// Checks if board is registered.
-get.irg = function(req, res) {
-	var boardNumber = req.query.board;
-
-	models.Device.findOne({'boardNumber': boardNumber}, function(err, device) {
-		if(err) return res.send('Error on finding registered device');
-		if(!device) return res.send('Not found');
-		return res.send('Registered device found');
-
-	});
-};
 // -----------------------------------------------------------
 // Post
 // -----------------------------------------------------------

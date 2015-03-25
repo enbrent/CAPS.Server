@@ -92,6 +92,15 @@ var validationRulesRegister = {
         }
       ]
     },
+    phoneNumber: {
+        identifier : 'phoneNumber',
+        rules : [
+            {
+                type : 'empty',
+                prompt: 'Please enter your phone number'
+            }
+        ]
+    },
     deviceNumber: {
         identifier : 'deviceNumber',
         rules : [

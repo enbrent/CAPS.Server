@@ -93,6 +93,7 @@ module.exports = function(passport, LocalStrategy) {
                             newUser.password = toolkit.encrypt(password);
                             newUser.firstName = req.param('firstName');
                             newUser.lastName = req.param('lastName');
+                            newUser.phoneNumber = req.param('phoneNumber');
                             newUser.deviceId = id(newDevice._id);
                             newUser.deviceNumber = newDevice.deviceNumber;
 
@@ -123,6 +124,7 @@ module.exports = function(passport, LocalStrategy) {
             _id: user._id,
             name: (user.firstName + ' ' + user.lastName),
             email: user.email,
+            phoneNumber : user.phoneNumber,
             deviceNumber: user.deviceNumber,
             deviceId : user.deviceId
         }

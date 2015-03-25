@@ -60,25 +60,27 @@ var userLoggedIn = function(req, res, next)  {
         return res.redirect('/home');
     next();
 }
-
+// Tests
 app.get('/debug', routes.get.debug);
 app.get('/genconfirm', routes.get.genconfirm);
 app.get('/genreset', routes.get.genreset);
-
+// Main pages
 app.get('/', userLoggedIn, routes.get.index);
 app.get('/home', isAuthenticated, routes.get.home);
+// User authentication
 app.get('/register', routes.get.register);
 app.get('/reset/*', routes.get.reset);
 app.get('/resetpass', routes.get.resetpass);
 app.get('/logoff', routes.get.logoff);
-app.get('/rgs', routes.get.rgs);
-app.get('/verify/*', routes.get.verify);
-
 app.post('/login', routes.post.login);
 app.post('/register', routes.post.register);
 app.post('/changepass', routes.post.changepass);
 app.post('/changepriority', routes.post.changepriority);
-
+// Board functions
+app.get('/rgs', routes.get.rgs);
+app.get('/alert', routes.get.alert);
+// Temp
+app.get('/verify/*', routes.get.verify);
 // Android
 app.get('/logina', routes.get.logina);
 

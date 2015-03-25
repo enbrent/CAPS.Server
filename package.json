@@ -25,6 +25,7 @@
     "connect-flash": "*",
     "shortid" : "*",
     "nodemailer" : "*",
-    "scribe-js" : "*"
+    "scribe-js" : "*",
+    "twilio" : "*"
   }
 }

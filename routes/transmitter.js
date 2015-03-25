@@ -67,5 +67,23 @@ exports.sendResetPasswordEmail = function(email, resetToken) {
 
 }
 
+exports.sendAlertText = function(number, toSend) {
+    // Twilio Credentials 
+    var accountSid = 'AC3d78ab39ab36ec6d03c2b4100ab1be42'; 
+    var authToken = '713ab9cea3304d485ff4b3c23cf12276'; 
+     
+    //require the Twilio module and create a REST client 
+    var client = require('twilio')(accountSid, authToken); 
+     
+    client.messages.create({ 
+        to: number, 
+        from: "+18033106240", 
+        body: toSend,   
+    }, function(err, message) { 
+        console.log(err);
+        // console.log(message.sid); 
+    });
+}
+
 
 

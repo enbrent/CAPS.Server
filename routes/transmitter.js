@@ -61,6 +61,7 @@ exports.sendResetPasswordEmail = function(email, resetToken) {
         if(error){
             console.log(error);
         }else{
+
             console.log("Message sent: " + response.message);
         }
     });  
@@ -80,8 +81,10 @@ exports.sendAlertText = function(number, toSend) {
         from: "+18033106240", 
         body: toSend,   
     }, function(err, message) { 
-        console.log(err);
-        // console.log(message.sid); 
+        if(err) console.log(err);
+        setTimeout(function() {
+            console.log("5 seconds elapsed since text");
+        }, 5000);
     });
 }
 

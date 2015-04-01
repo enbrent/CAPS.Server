@@ -64,6 +64,7 @@ var userLoggedIn = function(req, res, next)  {
 app.get('/debug', routes.get.debug);
 app.get('/genconfirm', routes.get.genconfirm);
 app.get('/genreset', routes.get.genreset);
+app.get('/ping', routes.get.ping);
 // Main pages
 app.get('/', userLoggedIn, routes.get.index);
 app.get('/home', isAuthenticated, routes.get.home);
@@ -122,7 +123,7 @@ routes.configure(function() {
     routes.set("db", db);
     routes.set("passport", passport);
     routes.set("mongoose", mongoose);
-})
+});
 
 // Initiate authentication scripts.
 require('./routes/authenticate')(passport, LocalStrategy);

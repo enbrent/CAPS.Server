@@ -275,12 +275,48 @@ get.alert = function(req, res) {
               , priority = device.priorities[sensor];
             if(!sensor) return res.send('Error in getting sensor');
             if(priority <= 0) return res.send('Sensor does not exist/turned off');
-            message = 'This is a CAPS Device alert. Your ' + sensor +' sensor has picked up something inside your car.';
-            transmitter.sendAlertText(user.phoneNumber, message);
-            res.send('Text message sent');
+
+            // Make alert document.
+            var alert = models.Alert();
+            alert._id = shortId.generate();
+            // Generate 6 length random numbers for token.
+            alert.token = (Math.floor(Math.random() * 1000000)).toString();
+            alert.phoneNumber = user.phoneNumber;
+
+            alert.save(function(err) {
+                if(err) return res.send(err);
+                message = 'This is a CAPS Device alert. Your ' + sensor +' sensor has picked up something inside your car. ';
+                message += 'Please reply this code to confirm this alert: ' + alert.token;
+                transmitter.sendAlertText(user.phoneNumber, message);
+                res.send('Text message sent');
+            });
         });
         
     });
+}
+
+get.reply = function(req, res) {
+    var sourceNumber = req.query.From
+      , body = req.query.Body;
+    console.log('user ' + sourceNumber + ' says ' + body);
+
+    transmitter.sendAlertText(sourceNumber, 'Thanks for replying');
+}
+
+post.reply = function(req, res) {
+    var phoneNum = req.body.From
+      , alertToken = req.body.Body;
+
+    // Lookup db if token is valid
+    models.Alert.findOne({"token":alertToken}, function(err, alert){
+        if(err) return console.log(err);
+        if(!alert) return console.log('invalid alert token'); // might have to retext
+
+        // Delete alert document.
+        console.log('document shouldve been removed.');
+        alert.remove();
+    });
+
 }
 // -----------------------------------------------------------
 // Post

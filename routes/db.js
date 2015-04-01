@@ -12,13 +12,18 @@ var userSchema = new Schema({
     deviceNumber: String // may be directed to another schema later. Board schema.
 });
 
-
 var deviceSchema = new Schema({
 	deviceNumber: String,
   isActivated: Boolean,
 	sensors : Object,
 	priorities: Object
-})
+});
+
+var alertSchema = new Schema({
+  _id : String,
+  phoneNumber : Number,
+  token : String
+});
 
 var confirmTokenSchema = new Schema({
     _id : String,
@@ -33,12 +38,14 @@ var resetTokenSchema = new Schema({
 
 var User = mongoose.model('User', userSchema)
   , Device = mongoose.model('Device', deviceSchema)
+  , Alert = mongoose.model('Alert', alertSchema)
   , ConfirmToken = mongoose.model('ConfirmToken', confirmTokenSchema)
   , ResetToken = mongoose.model('ResetToken', resetTokenSchema);
 
 module.exports = {
     User: User,
     Device: Device,
+    Alert: Alert,
     ConfirmToken : ConfirmToken,
     ResetToken : ResetToken
 }

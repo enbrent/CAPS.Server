@@ -68,6 +68,10 @@ function createSensorList() {
 
 	var sensors = JSON.stringify(deviceData.sensors);
 	var priorities = JSON.stringify(deviceData.priorities);
+	var isSynced = deviceData.isSynced;
+
+	console.log('the device is synced: ' + isSynced);
+
 	sensorCount = Object.keys(deviceData.sensors).length;
 	sCount = sensorCount;
 
@@ -75,6 +79,18 @@ function createSensorList() {
 	var uiDropdown = createDropdown(sensorCount);
 
 	var sensorForm = document.getElementById('updateSensorForm');
+
+	/// Create warning message that device is not synced.
+	if(!isSynced) {
+        var error = document.createElement('div');
+        error.className = 'ui negative message';
+        var p = document.createElement('p');
+        p.innerHTML = 'Please reset your device to complete priority update.';
+        p.style.textAlign = 'left';
+        error.appendChild(p);
+        // document.body.appendChild(error);
+        sensorForm.appendChild(error);
+    }  
 
 	/// Create each sensor segment and append.
 	for(var i = 0; i < sensorCount; i += 1) {

@@ -83,6 +83,7 @@ module.exports = function(passport, LocalStrategy) {
                             newDevice.sensors = {};
                             newDevice.priorities = {};
                             newDevice.isActivated = false;
+                            newDevice.isSynced = true;
 
                             // Save device to db.
                             newDevice.save(function(err) {

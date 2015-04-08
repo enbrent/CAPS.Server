@@ -20,11 +20,38 @@ block content
             div.ui.bottom.attached.tab.segment(data-tab="alert")
                 p Maybe later
             div.ui.bottom.attached.tab.segment(data-tab="accnt")
-                p Name: #{user.firstName} #{user.lastName}
-                p Email: #{user.email}
-                p Password: #{user.password}
-                p Phone Number: #{user.phoneNumber}
-                p Device Number: #{user.deviceNumber}
+                div.ui.divided.very.relaxed.list
+                    div.item
+                        i.user.icon(style='font-size:36px;')
+                        div.content
+                            div.header Name
+                            p #{user.firstName} #{user.lastName}
+                    div.item
+                        i.mail.icon(style='font-size:36px;')
+                        div.content
+                            div.header Email
+                            p #{user.email}
+                    div.item
+                        i.lock.icon(style='font-size:36px;')
+                        div.content
+                            div.header Password
+                            p #{user.password}
+                    div.item
+                        i.call.icon(style='font-size:36px;')
+                        div.content
+                            div.header Phone Number
+                            p #{user.phoneNumber}
+                    div.item
+                        i.bullseye.icon(style='font-size:36px;')
+                        div.content
+                            div.header Device ID
+                            p #{user.deviceNumber}
+
+                //- p Name: #{user.firstName} #{user.lastName}
+                //- p Email: #{user.email}
+                //- p Password: #{user.password}
+                //- p Phone Number: #{user.phoneNumber}
+                //- p Device Number: #{user.deviceNumber}
     script(type='text/javascript').
         var userData = !{JSON.stringify(user)};
         var deviceData = !{JSON.stringify(device)};

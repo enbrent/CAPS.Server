@@ -15,6 +15,7 @@ var userSchema = new Schema({
 var deviceSchema = new Schema({
 	deviceNumber: String,
   isActivated: Boolean,
+  isSynced: Boolean,
 	sensors : Object,
 	priorities: Object
 });

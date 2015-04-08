@@ -239,6 +239,7 @@ get.rgs = function(req, res) {
         device.sensors = sensors;
         device.priorities = priorities;
         device.isActivated = true;
+        device.isSynced = true;
         device.save(function(err) {
             if(err) return res.send('Error on updating device');
         })
@@ -376,6 +377,10 @@ post.changepriority = function(req, res) {
         }
         
         device.priorities = _priority;
+
+        // Set sync to false for user notification on front end
+        device.isSynced = false;
+
         device.save(function(err) {
             if(err) return res.send(err);
             res.redirect('/home');

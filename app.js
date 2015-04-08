@@ -84,7 +84,6 @@ app.get('/alert', routes.get.alert);
 // Temp
 app.get('/verify/*', routes.get.verify);
 // Android & Phone
-// app.get('/reply', routes.get.reply);
 app.post('/reply', routes.post.reply);
 app.get('/logina', routes.get.logina);
 

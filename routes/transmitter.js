@@ -74,7 +74,7 @@ exports.sendAlertText = function(number, toSend) {
     var accountSid = 'AC3d78ab39ab36ec6d03c2b4100ab1be42'; 
     var authToken = '713ab9cea3304d485ff4b3c23cf12276'; 
 
-    var waitTime = 600000;
+    var waitTime = 15000;
      
     //require the Twilio module and create a REST client 
     var client = require('twilio')(accountSid, authToken); 
@@ -89,8 +89,8 @@ exports.sendAlertText = function(number, toSend) {
             console.log("15 seconds elapsed since text, calling");
             // Check if alert is gone
             models.Alert.findOne({'phoneNumber' : number}, function(err, alert) {
-                if(err) return res.send(err);
-                if(!alert) return res.send('Error: alert document not found');
+                if(err) return console.err(err);
+                if(!alert) return console.log('Error: alert document not found');
                 // If alert is still there, initiate call and delete the alert.
                 client.calls.create({ 
                     url : 'http://demo.twilio.com/docs/voice.xml',
@@ -105,7 +105,7 @@ exports.sendAlertText = function(number, toSend) {
                 });
                 alert.remove();
             });
-        }, 15000);
+        }, waitTime);
     });
 }
 

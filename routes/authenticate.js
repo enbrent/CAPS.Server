@@ -23,7 +23,7 @@ module.exports = function(passport, LocalStrategy) {
         }, 
         function(req, username, password, done) {
 
-            console.log("INSIDE LOGIN @ AUTHENTICATE.js");
+            //console.log("INSIDE LOGIN @ AUTHENTICATE.js");
 
             db.User.findOne({'email' : username} ,
                 function(err, user) {
@@ -51,9 +51,9 @@ module.exports = function(passport, LocalStrategy) {
         }, 
         function(req, username, password, done) {
 
-            console.log("INSIDE SIGNUP @ AUTHENTICATE.js");
-            console.log('email: ' + username);
-            console.log('password: ' + password);
+            //console.log("INSIDE SIGNUP @ AUTHENTICATE.js");
+            //console.log('email: ' + username);
+            //console.log('password: ' + password);
 
             // Check if board is already registered.
             db.Device.findOne({'deviceNumber': req.param('deviceNumber')}, function(err, device) {
@@ -73,41 +73,46 @@ module.exports = function(passport, LocalStrategy) {
                     if(user) {
                         return returnCall('User already exists', done(null, false, req.flash('message', 'Email already registered')));
                     } else {
+                        // Check if phone number is used already.
+                        db.User.findOne({'phoneNumber': req.param('phoneNumber')}, function(err, user) {
+                            if(err) return returnCall("Error on signup: " + err, done(err));
+                            if(user) return returnCall('User already exists', done(null, false, req.flash('message', 'Phone already registered')));
+                            // Doesn't exist yet. Create new device and user.
+                            var newDevice = new db.Device();
+                            newDevice.deviceNumber = req.param('deviceNumber');
+                            newDevice.sensors = {};
+                            newDevice.priorities = {};
+                            newDevice.isActivated = false;
 
-                        // Doesn't exist yet. Create new device and user.
-                        var newDevice = new db.Device();
-                        newDevice.deviceNumber = req.param('deviceNumber');
-                        newDevice.sensors = {};
-                        newDevice.priorities = {};
-                        newDevice.isActivated = false;
-
-                        // Save device to db.
-                        newDevice.save(function(err) {
-                            if(err) {
-                                console.log("Error in saving device: " + err);
-                                throw err;
-                            }
-                            var newUser = new db.User();
-                            // Set fields.
-                            newUser.email =  username;
-                            newUser.password = toolkit.encrypt(password);
-                            newUser.firstName = req.param('firstName');
-                            newUser.lastName = req.param('lastName');
-                            newUser.phoneNumber = req.param('phoneNumber');
-                            newUser.deviceId = id(newDevice._id);
-                            newUser.deviceNumber = newDevice.deviceNumber;
-
-                            // Save user to db.
-                            newUser.save(function(err) {
+                            // Save device to db.
+                            newDevice.save(function(err) {
                                 if(err) {
-                                    console.log("Error in saving user: " + err);
+                                    console.log("Error in saving device: " + err);
                                     throw err;
                                 }
-                                newUser.password = null;
-                                delete newUser.password;
-                                return returnCall('User Registration successful', done(null, newUser));
+                                var newUser = new db.User();
+                                // Set fields.
+                                newUser.email =  username;
+                                newUser.password = toolkit.encrypt(password);
+                                newUser.firstName = req.param('firstName');
+                                newUser.lastName = req.param('lastName');
+                                newUser.phoneNumber = req.param('phoneNumber');
+                                newUser.deviceId = id(newDevice._id);
+                                newUser.deviceNumber = newDevice.deviceNumber;
+
+                                // Save user to db.
+                                newUser.save(function(err) {
+                                    if(err) {
+                                        console.log("Error in saving user: " + err);
+                                        throw err;
+                                    }
+                                    newUser.password = null;
+                                    delete newUser.password;
+                                    return returnCall('User Registration successful', done(null, newUser));
+                                });
                             });
-                        });
+                        })
+                        
                     }
                 });
             });

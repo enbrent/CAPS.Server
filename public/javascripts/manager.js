@@ -75,7 +75,10 @@ $(document).ready(function() {
 			transition: 'fade up',
 			onHide: function() {
 				(function() {
-					$('#editNameError').addClass('hidden');	
+					$('#editNameError').addClass('hidden');
+					$('#editNameModal').find(':input').each(function() {
+						jQuery(this).val('');
+					})
 				})();
 			},
 			onDeny: function() {

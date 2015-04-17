@@ -77,6 +77,7 @@ app.get('/textin', routes.get.textin);
 app.post('/login', routes.post.login);
 app.post('/register', routes.post.register);
 app.post('/changepass', routes.post.changepass);
+app.post('/changepriority', routes.post.changepriority);
 app.post('/changeinfo', routes.post.changeinfo);
 // Board functions
 app.get('/rgs', routes.get.rgs);

@@ -29,7 +29,10 @@ $(document).ready(function() {
 	
 
 	// Initialize tab menu
-	$('.ui.top.attached.tabular.menu.three.item .item').tab();
+	$('.ui.top.attached.tabular.menu.three.item .item').tab({
+		history: true,
+		historyType: 'hash'
+	});
 
 	console.log(deviceData);
 

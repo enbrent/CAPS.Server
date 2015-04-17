@@ -14,12 +14,12 @@ block content
             div.ui.top.attached.tabular.menu.three.item
                 div.active.item(data-tab="sensor") Sensors
                 div.item(data-tab="alert") Alerts
-                div.item(data-tab="accnt") Account
+                div.item(data-tab="account") Account
             div.ui.bottom.attached.active.tab.segment(data-tab="sensor" id="sensorTab")
                 form.ui.form(id='updateSensorForm' method='POST' action='/changepriority')
             div.ui.bottom.attached.tab.segment(data-tab="alert")
                 p Maybe later
-            div.ui.bottom.attached.tab.segment(data-tab="accnt")
+            div.ui.bottom.attached.tab.segment(data-tab="account")
                 div.ui.divided.very.relaxed.list
                     div.item
                         div.right.floated.circular.compact.ui.icon.button(id='editName')
@@ -27,9 +27,7 @@ block content
                         i.user.icon(style='font-size:36px;')
                         div.content
                             div.header Name
-                            p #{user.firstName} #{user.lastName}
-                        div.column
-                        
+                            p #{user.firstName} #{user.lastName}                        
                     div.item
                         div.right.floated.circular.compact.ui.icon.button
                             i.icon.edit(style='color:white;')

@@ -22,36 +22,60 @@ block content
             div.ui.bottom.attached.tab.segment(data-tab="accnt")
                 div.ui.divided.very.relaxed.list
                     div.item
+                        div.right.floated.circular.compact.ui.icon.button(id='editName')
+                            i.icon.edit(style='color:white;')
                         i.user.icon(style='font-size:36px;')
                         div.content
                             div.header Name
                             p #{user.firstName} #{user.lastName}
+                        div.column
+                        
                     div.item
+                        div.right.floated.circular.compact.ui.icon.button
+                            i.icon.edit(style='color:white;')
                         i.mail.icon(style='font-size:36px;')
                         div.content
                             div.header Email
                             p #{user.email}
                     div.item
+                        div.right.floated.circular.compact.ui.icon.button
+                            i.icon.edit(style='color:white;')
                         i.lock.icon(style='font-size:36px;')
                         div.content
                             div.header Password
                             p #{user.password}
                     div.item
+                        div.right.floated.circular.compact.ui.icon.button
+                            i.icon.edit(style='color:white;')
                         i.call.icon(style='font-size:36px;')
                         div.content
                             div.header Phone Number
                             p #{user.phoneNumber}
                     div.item
+                        div.right.floated.circular.compact.ui.icon.button
+                            i.icon.edit(style='color:white;')
                         i.bullseye.icon(style='font-size:36px;')
                         div.content
                             div.header Device ID
                             p #{user.deviceNumber}
-
-                //- p Name: #{user.firstName} #{user.lastName}
-                //- p Email: #{user.email}
-                //- p Password: #{user.password}
-                //- p Phone Number: #{user.phoneNumber}
-                //- p Device Number: #{user.deviceNumber}
+    div.ui.small.modal(id='editNameModal')
+        i.close.icon
+        div.header Edit Name
+        div.content
+            form.ui.attached.fluid.segment.form(action='/login' method='POST')
+                div.two.fields
+                    div.field
+                        label First Name
+                        input(name='firstName' placeholder='First Name' type='text')
+                    div.field
+                        label Last Name
+                        input(name='lastName' placeholder='Last Name')
+        div.actions
+            div.two.fluid.buttons
+                div.ui.red.basic.button
+                    i.remove.icon
+            div.ui.green.basic.button
+                    i.checkmark.icon
     script(type='text/javascript').
         var userData = !{JSON.stringify(user)};
         var deviceData = !{JSON.stringify(device)};

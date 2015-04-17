@@ -9,3 +9,7 @@ div.ui.bottom.attached.active.tab.segment {
 .ui.menu .item {
     font-size: 13px;
 }
+
+.right.floated.circular.ui.icon.button {
+	background-color: rgba(0, 0, 0, 0.80);
+}

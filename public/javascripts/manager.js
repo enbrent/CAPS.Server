@@ -8,6 +8,7 @@ var updateButton = function() {
 	// button.className = 'ui button';
 	// updateButtonChanged = true;
 
+	//form = $('#updateSensorForm');
 	form = document.getElementById('updateSensorForm');
     // input.ui.fluid.button(type='submit' value='Update')
     button = document.createElement('input');
@@ -23,6 +24,9 @@ var updateButton = function() {
 
 $(document).ready(function() {
 	console.log('inside manager.js');
+
+	// $('#editName').modal('show');
+	
 
 	// Initialize tab menu
 	$('.ui.top.attached.tabular.menu.three.item .item').tab();
@@ -55,6 +59,10 @@ $(document).ready(function() {
 	$('#info')
 	  .transition('hide')
 	  .transition('fade up', '1s');
+
+	document.getElementById('editName').addEventListener("click", function() {
+		$('#editNameModal').modal('show');
+	}); 
 
 	console.log('inside end manager.js');
 

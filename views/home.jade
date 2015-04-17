@@ -27,39 +27,41 @@ block content
                         i.user.icon(style='font-size:36px;')
                         div.content
                             div.header Name
-                            p #{user.firstName} #{user.lastName}                        
+                            p(id='userName') #{user.firstName} #{user.lastName}                        
                     div.item
                         div.right.floated.circular.compact.ui.icon.button
                             i.icon.edit(style='color:white;')
                         i.mail.icon(style='font-size:36px;')
                         div.content
                             div.header Email
-                            p #{user.email}
+                            p(id='userEmail') #{user.email}
                     div.item
                         div.right.floated.circular.compact.ui.icon.button
                             i.icon.edit(style='color:white;')
                         i.lock.icon(style='font-size:36px;')
                         div.content
                             div.header Password
-                            p #{user.password}
+                            p(id='userPass') #{user.password}
                     div.item
                         div.right.floated.circular.compact.ui.icon.button
                             i.icon.edit(style='color:white;')
                         i.call.icon(style='font-size:36px;')
                         div.content
                             div.header Phone Number
-                            p #{user.phoneNumber}
+                            p(id='userPhone') #{user.phoneNumber}
                     div.item
                         div.right.floated.circular.compact.ui.icon.button
                             i.icon.edit(style='color:white;')
                         i.bullseye.icon(style='font-size:36px;')
                         div.content
                             div.header Device ID
-                            p #{user.deviceNumber}
+                            p(id='userDevice') #{user.deviceNumber}
     div.ui.small.modal(id='editNameModal')
         i.close.icon
         div.header Edit Name
         div.content
+            div.ui.negative.hidden.message(id='editNameError')
+                p Please enter a name
             form.ui.attached.fluid.segment.form(action='/login' method='POST')
                 div.two.fields
                     div.field
@@ -68,11 +70,10 @@ block content
                     div.field
                         label Last Name
                         input(name='lastName' placeholder='Last Name')
+
         div.actions
             div.two.fluid.buttons
-                div.ui.red.basic.button
-                    i.remove.icon
-            div.ui.green.basic.button
+                div.ui.positive.green.button
                     i.checkmark.icon
     script(type='text/javascript').
         var userData = !{JSON.stringify(user)};

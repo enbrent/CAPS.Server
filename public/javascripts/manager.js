@@ -1,3 +1,8 @@
+var codes = { 
+    'FAILED' : '1',
+    'OK' : '0'
+};
+
 var pChange = 0;
 var sCount = 0;
 var updateButtonChanged = false;
@@ -52,7 +57,6 @@ $(document).ready(function() {
 		document.getElementById('updateSensorForm').appendChild(msg);
 	}
 
-
 	// Initialize dropdown priorities for sensors
 	$('.dropdown').dropdown({
 	 transition: 'drop',
@@ -63,6 +67,53 @@ $(document).ready(function() {
 	  .transition('hide')
 	  .transition('fade up', '1s');
 
+	// Click listeners for update infos
+	// UPDATE NAME
+	$('#editNameModal')
+		.modal({
+			closable: false,
+			transition: 'fade up',
+			onHide: function() {
+				(function() {
+					$('#editNameError').addClass('hidden');	
+				})();
+			},
+			onDeny: function() {
+				console.log('denied!');
+				return false;
+			},
+			onApprove: function() {
+				// $.post('/changeinfo', {})
+				// Get first name and last name
+				var fname = document.querySelector('[name="firstName"]').value
+				  , lname = document.querySelector('[name="lastName"]').value
+
+				if(fname.length == 0 || lname.length == 0) {
+					$('#editNameError').children('p').get(0).innerHTML = 'Please enter your name';
+					$('#editNameError').removeClass('hidden');
+					return false;
+				}
+
+				var toSend = fname + ' ' + lname;
+
+				$.post('/changeinfo', { info: 'name', data: toSend } , function(data, stat, xhr) {
+					console.log(data);
+					console.log('approved!');
+					console.log(data.status);
+					console.log(data.msg);
+					if(data.status == codes.FAILED) {
+						$('#editNameError').children('p').get(0).innerHTML = data.msg;
+						$('#editNameError').removeClass('hidden');
+					} else {
+						console.log('sucesss');
+						$('#userName').html(toSend);
+						$('#editNameError').addClass('hidden');
+						$('#editNameModal').modal('hide');
+					}				
+				});
+				return false
+			}
+	});
 	document.getElementById('editName').addEventListener("click", function() {
 		$('#editNameModal').modal('show');
 	}); 

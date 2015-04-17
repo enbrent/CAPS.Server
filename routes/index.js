@@ -3,6 +3,7 @@ var express = require('express')
   , passport = require('passport')
   , models = require('./db')
   , toolkit = require('./toolkit')
+  , codes = require('./codes')
   , transmitter = require('./transmitter')
   , shortId = require('shortid');
 
@@ -386,6 +387,37 @@ post.changepriority = function(req, res) {
             res.redirect('/home');
         })
     });
+}
+
+post.changeinfo = function(req, res) {
+    console.log(req.body);
+
+    var info = req.body.info;
+    console.log(info);
+    if(info == null) { 
+        return {
+            status: codes.status.FAILED,
+            msg : 'Request is invalid'
+        }
+    }
+    if(info == 'name') {
+        var name = req.body.data;
+
+        var lastName = name.substring(name.indexOf(' ') + 1);
+        var firstName = name.substring(0, name.indexOf(lastName) - 1);
+
+        models.User.findById(req.user._id, function(err, user) {
+            user.firstName = firstName;
+            user.lastName = lastName;
+            user.save(function(err) {
+                if(err) {
+                    return res.send({ status: codes.status.FAILED, msg: err});
+                } else {
+                    return res.send({ status: codes.status.OK });
+                }
+            });
+        });
+    }
 }
 
 /**************************************************************

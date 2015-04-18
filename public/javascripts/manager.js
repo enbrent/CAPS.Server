@@ -67,63 +67,56 @@ $(document).ready(function() {
 	  .transition('hide')
 	  .transition('fade up', '1s');
 
-	// Click listeners for update infos
-	// UPDATE NAME
-	$('#editNameModal')
-		.modal({
-			closable: false,
-			transition: 'fade up',
-			onHide: function() {
-				(function() {
-					$('#editNameError').addClass('hidden');
-					$('#editNameModal').find(':input').each(function() {
-						jQuery(this).val('');
-					})
-				})();
-			},
-			onDeny: function() {
-				console.log('denied!');
-				return false;
-			},
-			onApprove: function() {
-				// $.post('/changeinfo', {})
-				// Get first name and last name
-				var fname = document.querySelector('[name="firstName"]').value
-				  , lname = document.querySelector('[name="lastName"]').value
-
-				if(fname.length == 0 || lname.length == 0) {
-					$('#editNameError').children('p').get(0).innerHTML = 'Please enter your name';
-					$('#editNameError').removeClass('hidden');
-					return false;
-				}
-
-				var toSend = fname + ' ' + lname;
-
-				$.post('/changeinfo', { info: 'name', data: toSend } , function(data, stat, xhr) {
-					console.log(data);
-					console.log('approved!');
-					console.log(data.status);
-					console.log(data.msg);
-					if(data.status == codes.FAILED) {
-						$('#editNameError').children('p').get(0).innerHTML = data.msg;
-						$('#editNameError').removeClass('hidden');
-					} else {
-						console.log('sucesss');
-						$('#userName').html(toSend);
-						$('#editNameError').addClass('hidden');
-						$('#editNameModal').modal('hide');
-					}				
-				});
-				return false
-			}
-	});
-	document.getElementById('editName').addEventListener("click", function() {
-		$('#editNameModal').modal('show');
-	}); 
+	registerUpdateModals();
 
 	console.log('inside end manager.js');
 
 }); 
+
+function registerUpdateModals() {
+    registerModal('editName', { name: 'name', id: 'userName' }, function() {
+        var fname = document.querySelector('[name="firstName"]').value
+        , lname = document.querySelector('[name="lastName"]').value;
+
+        if(fname.length == 0 || lname.length == 0) return errorInModal('#editNameError', 'Please enter your name');
+        return (fname + ' ' + lname);
+    });
+
+    registerModal('editEmail', { name: 'email', id: 'userEmail' }, function() {
+    	var email = document.querySelector('[name="email"]').value;
+
+    	if(email.length == 0) return errorInModal('#editEmailError', 'Please enter your email');
+    	var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    	if(!re.test(email)) return errorInModal('#editEmailError', 'Please enter a valid email');
+    	if(userData.email == email) return errorInModal('#editEmailError', 'This email is your current email');	
+    	return email;
+    })
+
+    registerModal('editPass', { name: 'password', id: 'userPass' }, function() {
+    	var curpw = document.querySelector('[name="password"]').value
+    	  , npw = document.querySelector('[name="newpassword"]').value
+    	  , cpw = document.querySelector('[name="conpassword"]').value;
+
+    	  if(curpw.length == 0) return errorInModal('#editPassError', 'Please enter your current password');
+    	  if(npw.length == 0) return errorInModal('#editPassError', 'Please enter your new password');
+    	  if(cpw.length == 0) return errorInModal('#editPassError', 'Please enter your new password again');
+    	  return { current: curpw, new: npw, confirm: cpw };
+    })
+
+    registerModal('editPhone', { name: 'phone', id: 'userPhone'}, function() {
+    	var phoneNum = document.querySelector('[name="phoneNum"]').value
+
+    	if(phoneNum.length == 0) return errorInModal('#editPhoneError', 'Please enter your phone number');
+    	return phoneNum;
+    });
+
+}
+
+function errorInModal(id, msg) {
+	$(id).children('p').get(0).innerHTML = msg;
+    $(id).removeClass('hidden');
+    return null;
+}
 
 // Create semantic-ui segments for each sensor
 function createSensorList() {
@@ -266,4 +259,56 @@ function createDiv(className) {
 	var div = document.createElement('div');
 	div.className = className;
 	return div;
+}
+
+function registerModal(id, info, getData) {
+	var modalId = '#' + id + 'Modal'
+	  , errorId = '#' + id + 'Error';
+
+	var infoName = info.name
+	  , infoId =  '#' + info.id
+
+    $(modalId)
+        .modal({
+            closable: false,
+            transition: 'fade up',
+            onHide: function() {
+                (function() {
+                    $(errorId).addClass('hidden');
+                    $(modalId).find(':input').each(function() {
+                        jQuery(this).val('');
+                    })
+                })();
+            },
+            onDeny: function() {
+                console.log('denied!');
+                return false;
+            },
+            onApprove: function() {
+
+                var toSend = getData();
+                console.log('to send:' + toSend);
+                if(toSend == null) return false;
+
+                $.post('/changeinfo', { info: infoName, data: toSend } , function(data, stat, xhr) {
+                    console.log(data);
+                    if(data.status == codes.FAILED) {
+                        $(errorId).children('p').get(0).innerHTML = data.msg;
+                        $(errorId).removeClass('hidden');
+                    } else {
+                        console.log('sucesss');
+                        if(id == 'editPass') $(infoId).html('••••••••••••');
+                        else $(infoId).html(data.data);
+                        if(id == 'editName') $('#nameMenu').html(data.data);
+                        $(errorId).addClass('hidden');
+                        $(modalId).modal('hide');
+                    }               
+                });
+                return false
+            }
+    });
+    document.getElementById(id).addEventListener("click", function() {
+        $(modalId).modal('show');
+    }); 
+
 }

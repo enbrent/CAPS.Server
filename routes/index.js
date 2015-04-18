@@ -402,10 +402,9 @@ post.changeinfo = function(req, res) {
     }
     if(info == 'name') {
         var name = req.body.data;
-
-        var lastName = name.substring(name.indexOf(' ') + 1);
-        var firstName = name.substring(0, name.indexOf(lastName) - 1);
-
+        name = name.split(' ');
+        var lastName = name[1];
+        var firstName = name[0];
         models.User.findById(req.user._id, function(err, user) {
             user.firstName = firstName;
             user.lastName = lastName;
@@ -413,11 +412,78 @@ post.changeinfo = function(req, res) {
                 if(err) {
                     return res.send({ status: codes.status.FAILED, msg: err});
                 } else {
-                    return res.send({ status: codes.status.OK });
+                    return res.send({ status: codes.status.OK, data: req.body.data });
                 }
             });
         });
+    } else if(info == 'email') {
+        var email = req.body.data;
+        // Check if email is already used
+        models.User.findOne({'email' : email}, function(err, user) {
+            if(err) return res.send({ status: codes.status.FAILED, msg: err });
+            if(user) return res.send({ status: codes.status.FAILED, msg: 'Email already in use' });
+            models.User.findById(req.user._id, function(err, user) {
+                console.log('hereee');
+                user.email = email;
+                user.save(function(err) {
+                    if(err) {
+                        return res.send({ status: codes.status.FAILED, msg: err });
+                    } else {
+                        return res.send({ status: codes.status.OK, data: email });
+                    }
+                })
+            })            
+        })
+    } else if(info == 'password') {
+        var currentpw = req.body.data.current
+          , newpw = req.body.data.new
+          , confirmpw = req.body.data.confirm;
+        if(newpw.length < 6) return res.send({ status: codes.status.FAILED, msg: 'Your password should be at least 6 characters long' });
+        if(newpw != confirmpw) return res.send({ status: codes.status.FAILED, msg: 'The new passwords do not match' });
+        models.User.findById(req.user._id, function(err, user) {
+            if(err) return res.send({ status: codes.status.FAILED, msg: err });
+            if(!user) return res.send( {status: codes.status.FAILED, msg: 'User does not exist' });
+            var hashed_oldpw = toolkit.encrypt(currentpw);
+            if(hashed_oldpw != user.password) return res.send({ status: codes.status.FAILED, msg: 'The current password you entered is invalid' });
+            var hashed_newpw = toolkit.encrypt(newpw);
+            user.password = hashed_newpw;
+            user.save(function(err) {
+                if(err) return res.send({ status: codes.status.FAILED, msg: err });
+                return res.send({ status: codes.status.OK, data: hashed_newpw })
+            })
+        });
+    } else if(info == 'phone') {
+        var phoneNum = req.body.data;
+        models.User.findOne({'phoneNumber': phoneNum}, function(err, user) {
+            if(err) return res.send({ status: codes.status.FAILED, msg: err });
+            if(user) return res.send({ status: codes.status.FAILED, msg: 'The phone number is already in use' });
+            models.User.findById(req.user._id, function(err, user) {
+                if(err) return res.send({ status: codes.status.FAILED, msg: err });
+                if(!user) return res.send( {status: codes.status.FAILED, msg: 'User does not exist' });
+                user.phoneNumber = phoneNum;
+                user.save(function(err) {
+                    if(err) return res.send({ status: codes.status.FAILED, msg: err });
+                    return res.send({ status: codes.status.OK, data: phoneNum });
+                })
+            });
+        })
+    } else if(info == 'device') {
+        var deviceId = req.body.data;
+        models.User.findOne({'deviceId': deviceId}, function(err, user) {
+            if(err) return res.send({ status: codes.status.FAILED, msg: err });
+            if(user) return res.send({ status: codes.status.FAILED, msg: 'The phone number is already in use' });
+            models.User.findById(req.user._id, function(err, user) {
+                if(err) return res.send({ status: codes.status.FAILED, msg: err });
+                if(!user) return res.send( {status: codes.status.FAILED, msg: 'User does not exist' });
+                user.deviceId = deviceId;
+                user.save(function(err) {
+                    if(err) return res.send({ status: codes.status.FAILED, msg: err });
+                    return res.send({ status: codes.status.OK, data: deviceId });
+                })
+            });
+        })
     }
+
 }
 
 /**************************************************************

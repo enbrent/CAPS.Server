@@ -6,7 +6,7 @@ block content
         a.active.item(href='/home') Home
         a.item(href='/home') About
         div.right.menu
-            div.text.item #{user.firstName} #{user.lastName}
+            div.text.item(id='nameMenu') #{user.firstName} #{user.lastName}
             a.item(href='/logoff')
                 <i class="sign out icon"></i>
     div.container(style='width:650px; position:relative; margin:0px auto' id='info')
@@ -29,28 +29,28 @@ block content
                             div.header Name
                             p(id='userName') #{user.firstName} #{user.lastName}                        
                     div.item
-                        div.right.floated.circular.compact.ui.icon.button
+                        div.right.floated.circular.compact.ui.icon.button(id='editEmail')
                             i.icon.edit(style='color:white;')
                         i.mail.icon(style='font-size:36px;')
                         div.content
                             div.header Email
                             p(id='userEmail') #{user.email}
                     div.item
-                        div.right.floated.circular.compact.ui.icon.button
+                        div.right.floated.circular.compact.ui.icon.button(id='editPass')
                             i.icon.edit(style='color:white;')
                         i.lock.icon(style='font-size:36px;')
                         div.content
                             div.header Password
-                            p(id='userPass') #{user.password}
+                            p(id='userPass') ••••••••••••
                     div.item
-                        div.right.floated.circular.compact.ui.icon.button
+                        div.right.floated.circular.compact.ui.icon.button(id='editPhone')
                             i.icon.edit(style='color:white;')
                         i.call.icon(style='font-size:36px;')
                         div.content
                             div.header Phone Number
                             p(id='userPhone') #{user.phoneNumber}
                     div.item
-                        div.right.floated.circular.compact.ui.icon.button
+                        div.right.floated.circular.compact.ui.icon.button(id='editDevice')
                             i.icon.edit(style='color:white;')
                         i.bullseye.icon(style='font-size:36px;')
                         div.content
@@ -58,11 +58,11 @@ block content
                             p(id='userDevice') #{user.deviceNumber}
     div.ui.small.modal(id='editNameModal')
         i.close.icon
-        div.header Edit Name
+        div.header Change Name
         div.content
             div.ui.negative.hidden.message(id='editNameError')
                 p Please enter a name
-            form.ui.attached.fluid.segment.form(action='/login' method='POST')
+            form.ui.attached.fluid.segment.form
                 div.two.fields
                     div.field
                         label First Name
@@ -70,11 +70,62 @@ block content
                     div.field
                         label Last Name
                         input(name='lastName' placeholder='Last Name')
-
         div.actions
             div.two.fluid.buttons
                 div.ui.positive.green.button
                     i.checkmark.icon
+    div.ui.small.modal(id='editEmailModal')
+        i.close.icon
+        div.header Change Email
+        div.content
+            div.ui.negative.hidden.message(id='editEmailError')
+                p Please enter your email
+            form.ui.attached.fluid.segment.form
+                div.field
+                    label New Email
+                    input(name='email' placeholder='Email' type='email')
+        div.actions
+            div.two.fluid.buttons
+                div.ui.positive.green.button
+                    i.checkmark.icon
+    div.ui.small.modal(id='editPassModal')
+        i.close.icon
+        div.header Change Password
+        div.content
+            div.ui.negative.hidden.message(id='editPassError')
+                p Please enter a password
+            form.ui.attached.fluid.segment.form
+                div.field
+                    label Please enter your current password
+                    input(name='password' placeholder='Current Password' type='password')
+                div.two.fields
+                    div.field
+                        label New Password
+                        input(name='newpassword' placeholder='New Password' type='password')
+                    div.field
+                        label Confirm Password
+                        input(name='conpassword' placeholder='Confirm New Password' type='password')
+        div.actions
+            div.two.fluid.buttons
+                div.ui.positive.green.button
+                    i.checkmark.icon
+    div.ui.small.modal(id='editPhoneModal')
+        i.close.icon
+        div.header Change Phone Number
+        div.content
+            div.ui.negative.hidden.message(id='editPhoneError')
+                p Please enter a password
+            form.ui.attached.fluid.segment.form
+                div.field
+                    label New Phone Number
+                    div.ui.labeled.input
+                        div.ui.label +1
+                        input(name='phoneNum' placeholder='Phone Number' type='tel')
+        div.actions
+            div.two.fluid.buttons
+                div.ui.positive.green.button
+                    i.checkmark.icon
+
     script(type='text/javascript').
         var userData = !{JSON.stringify(user)};
         var deviceData = !{JSON.stringify(device)};

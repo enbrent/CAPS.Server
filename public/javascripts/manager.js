@@ -28,25 +28,29 @@ var updateButton = function() {
 }
 
 $(document).ready(function() {
-	console.log('inside manager.js');
-
-	// $('#editName').modal('show');
-	
-
-	// Initialize tab menu
-	$('.ui.top.attached.tabular.menu.three.item .item').tab({
-		history: true,
-		historyType: 'hash'
-	});
+	console.log('inside start manager.js');
 
 	console.log(deviceData);
 
-	// if(!userData.phoneVerified) {}
+	if(!userData.phoneVerified) {
+		verifyPhone();
+	} else {
+		start();
+	}
+	console.log('inside end manager.js');
 
+}); 
+
+function start() {
 	// Check if data is activated.
 	if(deviceData.isActivated) {
 		createSensorList();		
 	} else {
+		// Initialize tab menu
+		$('.ui.top.attached.tabular.menu.three.item .item').tab({
+			history: true,
+			historyType: 'hash'
+		});
 		// Inform that device not activated.
 		var msg = createDiv('ui negative message');
 		var hdr = createDiv('header');
@@ -70,10 +74,7 @@ $(document).ready(function() {
 	  .transition('fade up', '1s');
 
 	registerUpdateModals();
-
-	console.log('inside end manager.js');
-
-}); 
+}
 
 function registerUpdateModals() {
     registerModal('editName', { name: 'name', id: 'userName' }, function() {
@@ -313,4 +314,63 @@ function registerModal(id, info, getData) {
         $(modalId).modal('show');
     }); 
 
+}
+
+function verifyPhone() {
+
+	$.post('/sendverifyphone', { phone: userData.phoneNumber}, function(data, stat, xhr) {
+		console.log(data);
+	});
+
+	$('#verifyNumber').val(userData.phoneNumber);
+    $('#verifyNumber').intlTelInput({
+        utilsScript: '/javascripts/telUtils.js',
+        onlyCountries: ['us']
+    });
+
+	$('#verifyPhoneModal').modal({
+		closable: false,
+		transition: 'fade up',
+		onApprove: function() {
+			var toPost = true;
+			$('#verifyPhoneList').empty();
+			if(!$('#verifyNumber').intlTelInput('isValidNumber')) {
+				addError('verifyPhone', 'Please enter a valid phone number');
+				toPost = false;
+			}
+			if($('#verifyToken').val() <= 0) {
+				addError('verifyPhone', 'Please enter your verification code');
+				toPost = false;
+			}
+			if(toPost) {
+				// Verify
+				$.post('/verifyphone', { phone: $('#verifyNumber').intlTelInput('getNumber'), token: $('#verifyToken').val()}, function(data, stat, xhr) {
+					if(data.status == codes.FAIL) {
+						addError('verifyPhone', data.msg);
+					} else {
+						start();
+						$('#verifyPhoneModal').modal('hide');
+					}
+				});
+			}
+
+			return false;
+		},
+		onDeny: function() {
+			// Resend
+			$.post('/sendverifyphone', { phone: $('#verifyNumber').intlTelInput('getNumber')}, function(data, stat, xhr) {
+				if(data.status == codes.FAIL) {
+					errorInModal('#verifyPhoneError', data.msg);
+				}
+			});
+			return false;
+		}
+	}).modal('show');
+}
+
+function addError(id, msg) {
+	var list = document.createElement('li');
+	list.innerHTML = msg;
+	$('#' + id + 'List').append(list);
+	$('#' + id + 'Error').removeClass('hidden');
 }

@@ -7,7 +7,7 @@ var userSchema = new Schema({
     password : String,
     firstName : String,
     lastName : String,
-    phoneNumber : Number,
+    phoneNumber : String,
     phoneVerified: false,
     deviceId : ObjectId,
     deviceNumber: String // may be directed to another schema later. Board schema.
@@ -38,9 +38,16 @@ var resetTokenSchema = new Schema({
     userId : ObjectId
 })
 
+var phoneTokenSchema = new Schema({
+    token: String,
+    userId : ObjectId,
+    phoneNumber : String
+});
+
 var User = mongoose.model('User', userSchema)
   , Device = mongoose.model('Device', deviceSchema)
   , Alert = mongoose.model('Alert', alertSchema)
+  , PhoneToken = mongoose.model('PhoneToken', phoneTokenSchema)
   , ConfirmToken = mongoose.model('ConfirmToken', confirmTokenSchema)
   , ResetToken = mongoose.model('ResetToken', resetTokenSchema);
 
@@ -48,6 +55,7 @@ module.exports = {
     User: User,
     Device: Device,
     Alert: Alert,
+    PhoneToken : PhoneToken,
     ConfirmToken : ConfirmToken,
     ResetToken : ResetToken
 }

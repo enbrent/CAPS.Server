@@ -13,11 +13,6 @@ $(document).ready(function() {
         onlyCountries: ['us']
     });
 
-    $('#verifyNumber').intlTelInput({
-        utilsScript: '/javascripts/telUtils.js',
-        onlyCountries: ['us']
-    });
-
     $('#registerForm').submit(function(e) {
         e.preventDefault();
 

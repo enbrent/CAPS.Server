@@ -78,6 +78,8 @@ app.get('/logoff', routes.get.logoff);
 app.get('/textin', routes.get.textin);
 app.post('/login', routes.post.login);
 app.post('/register', routes.post.register);
+app.post('/sendverifyphone', routes.post.sendverifyphone);
+app.post('/verifyphone', routes.post.verifyphone);
 app.post('/changepass', routes.post.changepass);
 app.post('/changepriority', routes.post.changepriority);
 app.post('/changeinfo', routes.post.changeinfo);

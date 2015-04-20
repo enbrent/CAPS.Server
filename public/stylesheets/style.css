@@ -13,3 +13,7 @@ div.ui.bottom.attached.active.tab.segment {
 .right.floated.circular.ui.icon.button {
 	background-color: rgba(0, 0, 0, 0.80);
 }
+
+.negative.button {
+    background-color: #4E446C !important;
+}

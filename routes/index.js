@@ -350,6 +350,54 @@ post.registertest = function(req, res, next) {
     })(req, res, next);
 }
 
+post.sendverifyphone = function(req, res) {
+    var phoneNum = req.body.phone;
+
+    // Remove existing token(s)
+    models.PhoneToken.remove({ userId : toId(req.user._id) }, function(err) {
+        if(err) return res.send({ status: codes.status.FAIL, msg: err });
+        var phoneToken = models.PhoneToken();
+        phoneToken.token = (Math.floor(Math.random() * 1000000)).toString();
+        phoneToken.userId = toId(req.user._id);
+        phoneToken.phoneNumber = phoneNum;
+
+        phoneToken.save(function(err) {
+            if(err) return res.send({ status: codes.status.FAIL, msg: err });
+
+            var msg = 'This is a message to verify your CAPS device account. Please enter this code in your account page: ';
+            msg += phoneToken.token;
+
+            transmitter.sendVerifyText(phoneNum, msg);    
+        })
+    }) 
+}
+
+post.verifyphone = function(req, res) {
+    var token = req.body.token
+      , phone = req.body.phone;
+
+    console.log(token);
+    console.log(phone);
+
+    // Find token to see if valid
+    models.PhoneToken.findOne({ userId: req.user._id, 'token': token, phoneNumber: phone}, function(err, ptoken) {
+        if(err) return res.send({ status: codes.status.FAIL, msg: err });
+        if(!ptoken) return res.send({ status: codes.status.FAIL, msg: 'The code entered is invalid' });
+        ptoken.remove();
+        // Set user as verified and update phone number
+        models.User.findById(req.user._id, function(err, user) {
+            if(err) return res.send({ status: codes.status.FAIL, msg: err });
+            if(!user) return res.send({ status: codes.status.FAIL, msg: 'SEVERE ERROR: Cannot find user' });
+            user.phoneVerified = true;
+            user.phoneNumber = phone;
+            user.save(function(err) {
+                if(err) return res.send({ status: codes.status.FAIL, msg: err });
+                return res.send({ status: codes.status.OK });
+            })
+        })
+    })
+}
+
 post.changepass = function(req, res) {
     var newpw = req.body.password
       , userId = req.user._id;
@@ -553,11 +601,6 @@ get.logina = function(req, res) {
 
     });
 }
-
-
-var getUserInfo = function(req, res) {
-
-};
 
 // -----------------------------------------------------------
 // Other

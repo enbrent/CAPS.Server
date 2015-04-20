@@ -69,11 +69,11 @@ exports.sendResetPasswordEmail = function(email, resetToken) {
 
 }
 
-exports.sendAlertText = function(number, toSend) {
-    // Twilio Credentials 
-    var accountSid = 'AC3d78ab39ab36ec6d03c2b4100ab1be42'; 
-    var authToken = '713ab9cea3304d485ff4b3c23cf12276'; 
+// Twilio Credentials 
+var accountSid = 'AC3d78ab39ab36ec6d03c2b4100ab1be42'; 
+var authToken = '713ab9cea3304d485ff4b3c23cf12276'; 
 
+exports.sendAlertText = function(number, toSend) {
     var waitTime = 15000;
      
     //require the Twilio module and create a REST client 
@@ -89,7 +89,7 @@ exports.sendAlertText = function(number, toSend) {
             console.log("15 seconds elapsed since text, calling");
             // Check if alert is gone
             models.Alert.findOne({'phoneNumber' : number}, function(err, alert) {
-                if(err) return console.err(err);
+                if(err) return console.log(err);
                 if(!alert) return console.log('Error: alert document not found');
                 // If alert is still there, initiate call and delete the alert.
                 client.calls.create({ 
@@ -109,5 +109,17 @@ exports.sendAlertText = function(number, toSend) {
     });
 }
 
+exports.sendVerifyText = function(number, toSend) {
+    //require the Twilio module and create a REST client 
+    var client = require('twilio')(accountSid, authToken); 
+    client.messages.create({ 
+        to: number, 
+        from: "+18033106240", 
+        body: toSend,   
+    }, function(err, message) { 
+        if(err) console.log(err);
+
+    });
+}
 
 

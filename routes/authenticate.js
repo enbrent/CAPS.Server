@@ -59,7 +59,7 @@ module.exports = function(passport, LocalStrategy) {
             db.Device.findOne({'deviceNumber': req.param('deviceNumber')}, function(err, device) {
                 if(err) return returnCall('Error in finding device: register', done(err));
                 if(device) return returnCall('Device already registered', 
-                    done(null, false, req.flash('message', 'Device already registered')));
+                    done(null, false, { field: 'device', message: 'Device already registered' }));
 
                 // Check if user already exists.
                 db.User.findOne({'email': username}, function(err, user) {
@@ -71,12 +71,12 @@ module.exports = function(passport, LocalStrategy) {
                     }
                     // Already exists.
                     if(user) {
-                        return returnCall('User already exists', done(null, false, req.flash('message', 'Email already registered')));
+                        return returnCall('User already exists', done(null, false, { field: 'email', message: 'Email already registered' }));
                     } else {
                         // Check if phone number is used already.
                         db.User.findOne({'phoneNumber': req.param('phoneNumber')}, function(err, user) {
                             if(err) return returnCall("Error on signup: " + err, done(err));
-                            if(user) return returnCall('User already exists', done(null, false, req.flash('message', 'Phone already registered')));
+                            if(user) return returnCall('User already exists', done(null, false, { field: 'phone', message: 'Phone already registered' }));
                             // Doesn't exist yet. Create new device and user.
                             var newDevice = new db.Device();
                             newDevice.deviceNumber = req.param('deviceNumber');
@@ -98,6 +98,7 @@ module.exports = function(passport, LocalStrategy) {
                                 newUser.firstName = req.param('firstName');
                                 newUser.lastName = req.param('lastName');
                                 newUser.phoneNumber = req.param('phoneNumber');
+                                newUser.phoneVerified = false;
                                 newUser.deviceId = id(newDevice._id);
                                 newUser.deviceNumber = newDevice.deviceNumber;
 
@@ -132,7 +133,7 @@ module.exports = function(passport, LocalStrategy) {
             email: user.email,
             phoneNumber : user.phoneNumber,
             deviceNumber: user.deviceNumber,
-            deviceId : user.deviceId
+            deviceId : user.deviceId,
         }
     }
 

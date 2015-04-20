@@ -26,6 +26,7 @@
     "shortid" : "*",
     "nodemailer" : "*",
     "scribe-js" : "*",
-    "twilio" : "*"
+    "twilio" : "*",
+    "intl-tel-input" : "*"
   }
 }

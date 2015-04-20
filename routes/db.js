@@ -8,6 +8,7 @@ var userSchema = new Schema({
     firstName : String,
     lastName : String,
     phoneNumber : Number,
+    phoneVerified: false,
     deviceId : ObjectId,
     deviceNumber: String // may be directed to another schema later. Board schema.
 });

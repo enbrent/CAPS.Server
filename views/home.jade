@@ -56,6 +56,26 @@ block content
                         div.content
                             div.header Device ID
                             p(id='userDevice') #{user.deviceNumber}
+    //- MODALS -
+    div.ui.small.modal(id='verifyPhoneModal')
+        i.close.icon
+        div.header Verify Phone Number
+        div.content
+            div.ui.negative.hidden.message(id='verifyPhoneError')
+                p Hi
+            form.ui.attached.fluid.segment.form(style='text-align:center')
+                p(style='text-align:center') A text message has been sent to this number:
+                div.field
+                    div.ui.input
+                        input(id='verifyNumber' name='phoneNumber' placeholder='Phone Number' type='tel' style='padding-left:45px; width:166px; text-align:center')
+                p(style='text-align:center') Please enter the code sent to complete the registration:
+                div.field
+                    div.ui.input
+                        input(id='verifyToken' name='verifyToken' placeholder='Code' style='width:100px; text-align:center')
+        div.actions
+            div.two.fluid.buttons
+                div.ui.positive.green.button
+                    i.checkmark.icon
     div.ui.small.modal(id='editNameModal')
         i.close.icon
         div.header Change Name
@@ -125,7 +145,6 @@ block content
             div.two.fluid.buttons
                 div.ui.positive.green.button
                     i.checkmark.icon
-
     script(type='text/javascript').
         var userData = !{JSON.stringify(user)};
         var deviceData = !{JSON.stringify(device)};

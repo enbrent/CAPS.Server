@@ -65,6 +65,8 @@ app.get('/debug', routes.get.debug);
 app.get('/genconfirm', routes.get.genconfirm);
 app.get('/genreset', routes.get.genreset);
 app.get('/ping', routes.get.ping);
+app.get('/registertest', routes.get.registertest);
+app.post('/registertest', routes.post.registertest);
 // Main pages
 app.get('/', userLoggedIn, routes.get.index);
 app.get('/home', isAuthenticated, routes.get.home);

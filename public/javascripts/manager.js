@@ -41,6 +41,8 @@ $(document).ready(function() {
 
 	console.log(deviceData);
 
+	// if(!userData.phoneVerified) {}
+
 	// Check if data is activated.
 	if(deviceData.isActivated) {
 		createSensorList();		

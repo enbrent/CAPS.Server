@@ -1,0 +1,65 @@
+extends layout-register
+
+block content
+    div.ui.one.column.centered.grid
+        div.column.six.wide(style='min-width:500px')
+            form.ui.attached.fluid.segment.form(method='POST' id='registerForm')
+                h1(class='ui center aligned header') Create an account
+                div.field(id='emailField')
+                    label Email
+                    div.ui.input
+                        input(name='email' placeholder='Email' type='email')
+                div.field(id='passwordField')
+                    label Password
+                    input(name='password' placeholder='Password' type='password')
+                div.two.fields
+                    div.field(id='fnameField')
+                        label First Name
+                        input(name='firstName' placeholder='First Name' type='text')
+                    div.field(id='lnameField')
+                        label Last Name
+                        input(name='lastName' placeholder='Last Name')
+                div.field(id='phoneField')
+                    label Phone Number
+                    div.ui.input
+                        input(id='phoneNumber' name='phoneNumber' placeholder='Phone Number' type='tel' style='padding-left:45px')
+                div.field(id='deviceField')
+                    label Device Number
+                    input(name='deviceNumber' placeholder='Device Number' type='text')
+                input.ui.fluid.button(type='submit' value='Register' id='submitRegister')
+                div.ui.hidden.negative.message(id='errorMessage')
+                        ul.list(id='errorList' style='font-size:12px;')
+            div.ui.bottom.attached.message            
+                p(style='text-align:center; font-size:13px')
+                    a(href='/') Already registered? Login here
+            script(type='text/javascript').
+                var errorMessage = !{JSON.stringify(message)};
+                if(errorMessage.length > 0) {
+                    var error = document.createElement('div');
+                    error.className = 'ui negative message';
+                    var p = document.createElement('p');
+                    p.innerHTML = errorMessage;
+                    p.style.textAlign = 'center';
+                    error.appendChild(p);
+                    var registerForm = document.getElementById('registerForm');
+                    registerForm.insertBefore(error, registerForm.children[1]);
+                }   
+    div.ui.small.modal(id='verifyPhoneModal')
+        i.close.icon
+        div.header Verify Phone Number
+        div.content
+            div.ui.negative.hidden.message(id='verifyPhoneError')
+                p Hi
+            form.ui.attached.fluid.segment.form(style='text-align:center')
+                p(style='text-align:center') A text message has been sent to this number:
+                div.field
+                    div.ui.input
+                        input(id='verifyNumber' name='phoneNumber' placeholder='Phone Number' type='tel' style='padding-left:45px; width:166px; text-align:center')
+                p(style='text-align:center') Please enter the code sent to complete the registration:
+                div.field
+                    div.ui.input
+                        input(id='verifyToken' name='verifyToken' placeholder='Code' style='width:100px; text-align:center')
+        div.actions
+            div.two.fluid.buttons
+                div.ui.positive.green.button
+                    i.checkmark.icon

@@ -26,6 +26,8 @@ block content
                 if(errorMessage.length > 0) {
                     var error = document.createElement('div');
                     error.className = 'ui negative message';
+                    error.style.fontSize = '12px';
+                    error.style.padding = '8px 1em';
                     var p = document.createElement('p');
                     p.innerHTML = errorMessage;
                     p.style.textAlign = 'center';

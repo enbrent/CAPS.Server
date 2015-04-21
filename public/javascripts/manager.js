@@ -334,26 +334,36 @@ function verifyPhone() {
 		onApprove: function() {
 			var toPost = true;
 			$('#verifyPhoneList').empty();
-			if(!$('#verifyNumber').intlTelInput('isValidNumber')) {
-				addError('verifyPhone', 'Please enter a valid phone number');
-				toPost = false;
+			$('#verifyPhoneError').addClass('hidden');
+
+			if(phoneLen()) {
+				 addErrorPre('Please enter your phone number', '#verifyPhone', '#verifyNumber', phoneLen);
+				 toPost = false;
 			}
-			if($('#verifyToken').val() <= 0) {
-				addError('verifyPhone', 'Please enter your verification code');
-				toPost = false;
+			else if(phoneValid()) {
+				 addErrorPre('Please enter a valid phone number', '#verifyPhone', '#verifyNumber', phoneLen);
+				 toPost = false;
 			}
+			if(verifyLen()) {
+				 addErrorPre('Please enter your verification code', '#verifyPhone', '#verifyToken', phoneLen);
+				 toPost = false;
+			}
+
 			if(toPost) {
 				// Verify
 				$.post('/verifyphone', { phone: $('#verifyNumber').intlTelInput('getNumber'), token: $('#verifyToken').val()}, function(data, stat, xhr) {
 					if(data.status == codes.FAIL) {
-						addError('verifyPhone', data.msg);
+						addError('#verifyPhone', '#verifyToken', data.msg);
+						$('#verifyPhoneError').removeClass('hidden');
 					} else {
 						start();
 						$('#verifyPhoneModal').modal('hide');
+						
 					}
 				});
+			} else {
+				$('#verifyPhoneError').removeClass('hidden');
 			}
-
 			return false;
 		},
 		onDeny: function() {
@@ -368,9 +378,39 @@ function verifyPhone() {
 	}).modal('show');
 }
 
-function addError(id, msg) {
-	var list = document.createElement('li');
-	list.innerHTML = msg;
-	$('#' + id + 'List').append(list);
-	$('#' + id + 'Error').removeClass('hidden');
+function addErrorPre(msg, errid, inputid, cmp) {
+   
+    addError(errid, inputid, msg);
+    var field = $(inputid + 'Field');
+    var input = $(inputid);
+    input.blur(function() {
+        if(!cmp()) {
+            field.removeClass('error');
+            input.unbind('blur');
+        }
+    })
+    input.keypress(function() {
+        if(!cmp()) {
+            field.removeClass('error');
+            // Check for phone because it unbinds the intlTel module
+            if(!input == $('#verifyPhone')) input.unbind('keypress');
+        }
+    })
 }
+
+function addError(errid, inputid, msg) {
+	var list = document.createElement('li');
+	var field = $(inputid+'Field');
+	list.innerHTML = msg;
+	console.log(msg);
+	console.log(errid);
+	$(errid + 'List').append(list);
+	if(field != null) field.addClass('error');
+	console.log('hereeee-------------');
+}
+
+// Verify phone comparators
+function verifyLen() { return $('#verifyToken').val() <= 0; }
+function phoneValid() { return !$('#verifyNumber').intlTelInput('isValidNumber'); }
+function phoneLen() { return $('#verifyNumber').intlTelInput('getNumber').length <= 0; }
+

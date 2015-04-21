@@ -59,17 +59,17 @@ block content
     //- MODALS -
     div.ui.small.modal(id='verifyPhoneModal')
         div.header Verify Phone Number
-        div.content
+        div.content(style='padding-top:12px;')
             div.ui.negative.hidden.message(id='verifyPhoneError', style='padding: 10px 1em; font-size:12px;')
                 ul.list(id='verifyPhoneList')
                     li Hi
             form.ui.attached.fluid.segment.form(style='text-align:center')
                 p(style='text-align:center') A text message has been sent to this number:
-                div.field
+                div.field(id='verifyNumberField')
                     div.ui.input
                         input(id='verifyNumber' name='phoneNumber' placeholder='Phone Number' type='tel' style='padding-left:45px; width:166px; text-align:center')
-                p(style='text-align:center') Please enter the code sent to complete the registration:
-                div.field
+                p(style='text-align:center') Please enter the code sent to complete the registration
+                div.field(id='verifyTokenField')
                     div.ui.input
                         input(id='verifyToken' name='verifyToken' placeholder='Code' style='width:100px; text-align:center')
         div.actions

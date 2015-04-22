@@ -73,9 +73,10 @@ block content
                     div.ui.input
                         input(id='verifyToken' name='verifyToken' placeholder='Code' style='width:100px; text-align:center')
         div.actions
-            div.two.fluid.buttons
-                div.ui.deny.button Resend
+            div.three.fluid.buttons
+                div.ui.deny.primary.button Resend
                 div.ui.positive.green.button Verify
+                a.ui.left.floated.button(href='/logoff') Logoff
     div.ui.small.modal(id='editNameModal')
         i.close.icon
         div.header Change Name

@@ -44,10 +44,6 @@ get.home = function(req, res) {
 }
 
 get.register = function(req, res) {
-	res.render('register', { title: 'CAPS Registration' , message: req.flash('message')});
-};
-
-get.registertest = function(req, res) {
     res.render('registertest', { title: 'CAPS Registration' , message: req.flash('message')});
 };
 
@@ -333,13 +329,7 @@ post.login = passport.authenticate('login', {
     failureFlash: true
 });
 
-post.register = passport.authenticate('register', {
-    successRedirect: '/home'
-    // failureRedirect: '/register',
-    // failureFlash: true
-});
-
-post.registertest = function(req, res, next) {
+post.register = function(req, res, next) {
     passport.authenticate('register', function(err, user, info) {
         if(err) { return res.send({ status: codes.status.FAIL, info: err }); }
         if(!user) { return res.send({ status: codes.status.FAIL, info: info }); }

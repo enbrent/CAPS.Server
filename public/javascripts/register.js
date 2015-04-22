@@ -72,7 +72,7 @@ function registerFormSubmit() {
             deviceNumber: deviceNumber.val()
         }
 
-        $.post('/registertest', toSend , function(data, stat, xhr) {
+        $.post('/register', toSend , function(data, stat, xhr) {
             console.log('here');
             if(data.status == codes.FAIL) {
                 console.log(data.info);

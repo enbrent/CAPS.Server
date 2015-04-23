@@ -342,24 +342,57 @@ post.register = function(req, res, next) {
 
 post.sendverifyphone = function(req, res) {
     var phoneNum = req.body.phone;
+    /// Check if user changed the phone number
+    // If user did, check if new phone number already used
+    models.User.findById(req.user._id, function(err, user) {
+        if(err) return res.send({ status: codes.status.FAIL, msg:err });
+        if(!user) return res.send({ status: codes.status.FAIL, msg: 'SEVERE ERROR: Cannot find user' });
+        if(user.phoneNum != phoneNum) {
+            // Check if new phone number already used
+            models.User.findOne({'phoneNum' : phoneNum}, function(err, user) {
+                if(err) return res.send({ status: codes.status.FAIL, msg:err });
+                if(user) return res.send({ status: codes.status.FAIL, msg: 'Phone number already used' });
+                // If not used yet, make phone token
+                // Remove existing token(s)
+                models.PhoneToken.remove({ userId : toId(req.user._id) }, function(err) {
+                    if(err) return res.send({ status: codes.status.FAIL, msg: err });
+                    var phoneToken = models.PhoneToken();
+                    phoneToken.token = (Math.floor(Math.random() * 1000000)).toString();
+                    phoneToken.userId = toId(req.user._id);
+                    phoneToken.phoneNumber = phoneNum;
 
-    // Remove existing token(s)
-    models.PhoneToken.remove({ userId : toId(req.user._id) }, function(err) {
-        if(err) return res.send({ status: codes.status.FAIL, msg: err });
-        var phoneToken = models.PhoneToken();
-        phoneToken.token = (Math.floor(Math.random() * 1000000)).toString();
-        phoneToken.userId = toId(req.user._id);
-        phoneToken.phoneNumber = phoneNum;
+                    phoneToken.save(function(err) {
+                        if(err) return res.send({ status: codes.status.FAIL, msg: err });
 
-        phoneToken.save(function(err) {
-            if(err) return res.send({ status: codes.status.FAIL, msg: err });
+                        var msg = 'This is a message to verify your CAPS device account. Please enter this code in your account page: ';
+                        msg += phoneToken.token;
 
-            var msg = 'This is a message to verify your CAPS device account. Please enter this code in your account page: ';
-            msg += phoneToken.token;
+                        transmitter.sendVerifyText(phoneNum, msg);    
+                    })
+                })              
+            })
+        } else {
+            // Proceed immediately to making a phone token
+            // Remove existing token(s)
+            models.PhoneToken.remove({ userId : toId(req.user._id) }, function(err) {
+                if(err) return res.send({ status: codes.status.FAIL, msg: err });
+                var phoneToken = models.PhoneToken();
+                phoneToken.token = (Math.floor(Math.random() * 1000000)).toString();
+                phoneToken.userId = toId(req.user._id);
+                phoneToken.phoneNumber = phoneNum;
 
-            transmitter.sendVerifyText(phoneNum, msg);    
-        })
-    }) 
+                phoneToken.save(function(err) {
+                    if(err) return res.send({ status: codes.status.FAIL, msg: err });
+
+                    var msg = 'This is a message to verify your CAPS device account. Please enter this code in your account page: ';
+                    msg += phoneToken.token;
+
+                    transmitter.sendVerifyText(phoneNum, msg);    
+                })
+            }) 
+        }
+    })
+
 }
 
 post.verifyphone = function(req, res) {

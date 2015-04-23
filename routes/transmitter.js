@@ -72,6 +72,7 @@ exports.sendResetPasswordEmail = function(email, resetToken) {
 // Twilio Credentials 
 var accountSid = 'AC3d78ab39ab36ec6d03c2b4100ab1be42'; 
 var authToken = '713ab9cea3304d485ff4b3c23cf12276'; 
+var phoneNumber = "+15125806512";
 
 exports.sendAlertText = function(number, toSend) {
     var waitTime = 15000;
@@ -81,7 +82,7 @@ exports.sendAlertText = function(number, toSend) {
      
     client.messages.create({ 
         to: number, 
-        from: "+18033106240", 
+        from: phoneNumber, 
         body: toSend,   
     }, function(err, message) { 
         if(err) console.log(err);
@@ -95,7 +96,7 @@ exports.sendAlertText = function(number, toSend) {
                 client.calls.create({ 
                     url : 'http://demo.twilio.com/docs/voice.xml',
                     to: number, 
-                    from: "+18033106240",   
+                    from: phoneNumber,   
                     method: "GET",  
                     record: "false" 
                 }, function(err, call) { 
@@ -114,7 +115,7 @@ exports.sendVerifyText = function(number, toSend) {
     var client = require('twilio')(accountSid, authToken); 
     client.messages.create({ 
         to: number, 
-        from: "+18033106240", 
+        from: phoneNumber, 
         body: toSend,   
     }, function(err, message) { 
         if(err) console.log(err);

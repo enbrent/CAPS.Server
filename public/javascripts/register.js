@@ -13,6 +13,20 @@ $(document).ready(function() {
         onlyCountries: ['us']
     });
 
+    $('#emergencyNumber').intlTelInput({
+        utilsScript: '/javascripts/telUtils.js',
+        onlyCountries: ['us']
+    });
+
+    $('.ui.checkbox').checkbox({
+        onChecked: function() {
+            $('#emergencyField').css('display', 'inherit');
+        }, 
+        onUnchecked: function() {
+            $('#emergencyField').css('display', 'none'); 
+        }
+    });
+
     $('#registerForm').submit(function(e) {
         e.preventDefault();
 
@@ -36,10 +50,15 @@ function registerFormSubmit() {
     // Get values from form
     var email = $('[name="email"]')
       , password = $('[name="password"]')
+      , cpassword = $('[name="cpassword"]')
       , firstName = $('[name="firstName"]')
       , lastName = $('[name="lastName"]')
       , phoneNumber = $('#phoneNumber')
+      , emergencyNumber = $('#emergencyNumber')
       , deviceNumber = $('[name="deviceNumber"]');
+
+    var useENum = $('.ui.checkbox').checkbox('is checked');
+
 
     console.log('email: ' +email.val());
     console.log('password: ' +password.val());
@@ -52,11 +71,17 @@ function registerFormSubmit() {
     if(emailLen()) addErrorPre('Please enter your email', $('#emailField'), email, emailLen);
     if(passLen()) addErrorPre('Please enter your password', $('#passwordField'), password, passLen);
     else if(passLenSix()) addErrorPre('Your password must be at least 6 characters long', $('#passwordField'), password, passLenSix);
+    if(cpassLen()) addErrorPre('Please enter your password again', $('#cpasswordField'), cpassword, cpassLen);
+    else if(passSame()) addErrorPre('The two passwords do not match', $('#cpasswordField'), cpassword, passSame);
     // console.log('passlensix: ' + passLenSix());
     if(fnameLen()) addErrorPre('Please enter your first name', $('#fnameField'), firstName, fnameLen);
     if(lnameLen()) addErrorPre('Please enter your last name', $('#lnameField'), lastName, lnameLen);
     if(phoneLen()) addErrorPre('Please enter your phone number', $('#phoneField'), phoneNumber, phoneLen);
     else if(phoneVal()) addErrorPre('Please enter a valid phone number', $('#phoneField'), phoneNumber, phoneVal);    
+    if(useENum) {
+        if(ephoneLen()) addErrorPre('Please enter your emergency number', $('#emergencyField'), emergencyNumber, ephoneLen);
+        else if(ephoneVal()) addErrorPre('Please enter a valid phone number', $('#emergencyField'), emergencyNumber, ephoneVal);    
+    }
     if(deviceLen()) addErrorPre('Please enter your device number', $('#deviceField'), deviceNumber, deviceLen);
 
     if(formSuccess) {
@@ -70,6 +95,12 @@ function registerFormSubmit() {
             lastName: lastName.val(),
             phoneNumber: phoneNumber.intlTelInput('getNumber'),
             deviceNumber: deviceNumber.val()
+        }
+
+        if(useENum) {
+            toSend.emergencyNumber = emergencyNumber.intlTelInput('getNumber');
+        } else {
+            toSend.emergencyNumber = phoneNumber.intlTelInput('getNumber');
         }
 
         $.post('/register', toSend , function(data, stat, xhr) {
@@ -117,8 +148,12 @@ function addError(msg, field) {
 function emailLen() { return $('[name="email"]').val().length <= 0 }
 function passLen() { return $('[name="password"]').val().length <= 0 }
 function passLenSix() { return $('[name="password"]').val().length < 6 }
+function cpassLen() { return $('[name="cpassword"]').val().length <= 0; }
+function passSame() { return $('[name="password"]').val() != $('[name="cpassword"]').val(); }
 function fnameLen() { return $('[name="firstName"]').val().length <= 0 }
 function lnameLen() { return $('[name="lastName"]').val().length <= 0 }
 function phoneLen() { return $('#phoneNumber').intlTelInput('getNumber').length <= 0 }
 function phoneVal() { return !$('#phoneNumber').intlTelInput('isValidNumber'); }
+function ephoneLen() { return $('#emergencyNumber').intlTelInput('getNumber').length <= 0}
+function ephoneVal() { return !$('#emergencyNumber').intlTelInput('isValidNumber'); }
 function deviceLen() { return $('[name="deviceNumber"]').val().length <= 0 }

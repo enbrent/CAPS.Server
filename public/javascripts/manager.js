@@ -42,15 +42,16 @@ $(document).ready(function() {
 }); 
 
 function start() {
+	
+	// Initialize tab menu
+	$('.ui.top.attached.tabular.menu.three.item .item').tab({
+		history: true,
+		historyType: 'hash'
+	});	
 	// Check if data is activated.
 	if(deviceData.isActivated) {
 		createSensorList();		
 	} else {
-		// Initialize tab menu
-		$('.ui.top.attached.tabular.menu.three.item .item').tab({
-			history: true,
-			historyType: 'hash'
-		});
 		// Inform that device not activated.
 		var msg = createDiv('ui negative message');
 		var hdr = createDiv('header');

@@ -8,10 +8,13 @@ block content
                 div.field(id='emailField')
                     label Email
                     div.ui.input
-                        input(name='email' placeholder='Email' type='email')
+                        input(name='email' placeholder='Email' type='email' autofocus)
                 div.field(id='passwordField')
                     label Password
                     input(name='password' placeholder='Password' type='password')
+                div.field(id='cpasswordField')
+                    label Confirm Password
+                    input(name='cpassword' placeholder='Confirm Password' type='password')
                 div.two.fields
                     div.field(id='fnameField')
                         label First Name
@@ -23,6 +26,14 @@ block content
                     label Phone Number
                     div.ui.input
                         input(id='phoneNumber' name='phoneNumber' placeholder='Phone Number' type='tel' style='padding-left:45px')
+                div.field
+                    div.ui.checkbox
+                        input(type='checkbox')
+                        label Use a separate emergency number
+                div.field(id='emergencyField' style='display:none')
+                    label Emergency Phone Number
+                    div.ui.input
+                        input(id='emergencyNumber' name='emergencyNumber' placeholder='Emergency Number' type='tel' style='padding-left:45px')
                 div.field(id='deviceField')
                     label Device Number
                     input(name='deviceNumber' placeholder='Device Number' type='text')

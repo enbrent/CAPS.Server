@@ -98,6 +98,7 @@ module.exports = function(passport, LocalStrategy) {
                                 newUser.firstName = req.param('firstName');
                                 newUser.lastName = req.param('lastName');
                                 newUser.phoneNumber = req.param('phoneNumber');
+                                newUser.emergencyNumber = req.param('emergencyNumber');
                                 newUser.phoneVerified = false;
                                 newUser.deviceId = id(newDevice._id);
                                 newUser.deviceNumber = newDevice.deviceNumber;

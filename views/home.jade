@@ -50,12 +50,12 @@ block content
                             div.header Phone Number
                             p(id='userPhone') #{user.phoneNumber}
                     div.item
-                        div.right.floated.circular.compact.ui.icon.button(id='editPhone')
+                        div.right.floated.circular.compact.ui.icon.button(id='editEPhone')
                             i.icon.edit(style='color:white;')
                         i.call.icon(style='font-size:36px;')
                         div.content
                             div.header Emergency Number
-                            p(id='userPhone') #{user.emergencyNumber}
+                            p(id='userEmergency') #{user.emergencyNumber}
                     div.item
                         div.right.floated.circular.compact.ui.icon.button(id='editDevice')
                             i.icon.edit(style='color:white;')
@@ -67,7 +67,7 @@ block content
     div.ui.small.modal(id='verifyPhoneModal')
         div.header Verify Phone Number
         div.content(style='padding-top:12px;')
-            div.ui.negative.hidden.message(id='verifyPhoneError', style='padding: 10px 1em; font-size:12px;')
+            div.ui.negative.hidden.message(id='verifyPhoneError', style='padding: 8px 10px; font-size:12px;')
                 ul.list(id='verifyPhoneList')
                     li Hi
             form.ui.attached.fluid.segment.form(style='text-align:center')
@@ -80,79 +80,117 @@ block content
                     div.ui.input
                         input(id='verifyToken' name='verifyToken' placeholder='Code' autofocus style='width:100px; text-align:center')
         div.actions
-            div.three.fluid.buttons
-                div.ui.deny.primary.button Resend
-                div.ui.positive.green.button Verify
-                a.ui.left.floated.button(href='/logoff') Logoff
+            div.ui.deny.primary.button Resend
+            div.ui.positive.green.button Verify
+            a.ui.left.floated.button(href='/logoff') Logoff
+    //- NAME MODAL
     div.ui.small.modal(id='editNameModal')
         i.close.icon
         div.header Change Name
-        div.content
-            div.ui.negative.hidden.message(id='editNameError')
-                p Please enter a name
+        div.content(style='padding-top:12px;')
+            div.ui.negative.hidden.message(id='editNameError' style='padding: 8px 20px; font-size:12px;')
+                ui.list(id='editNameList')
+                    li Hi
             form.ui.attached.fluid.segment.form
                 div.two.fields
-                    div.field
+                    div.field(id='firstNameField')
                         label First Name
-                        input(name='firstName' placeholder='First Name' type='text')
-                    div.field
+                        input(id='firstName' name='firstName' placeholder='First Name' type='text' autofocus)
+                    div.field(id='lastNameField')
                         label Last Name
-                        input(name='lastName' placeholder='Last Name')
+                        input(id='lastName' name='lastName' placeholder='Last Name')
         div.actions
-            div.two.fluid.buttons
-                div.ui.positive.green.button
-                    i.checkmark.icon
+            div.ui.positive.green.button
+                i.checkmark.icon
+    //- EMAIL MODAL
     div.ui.small.modal(id='editEmailModal')
         i.close.icon
         div.header Change Email
-        div.content
-            div.ui.negative.hidden.message(id='editEmailError')
-                p Please enter your email
+        div.content(style='padding-top:12px;')
+            div.ui.negative.hidden.message(id='editEmailError' style='padding: 8px 20px; font-size:12px;')
+                ui.list(id='editEmailList')
+                    li Hi
             form.ui.attached.fluid.segment.form
-                div.field
+                div.field(id='emailField')
                     label New Email
-                    input(name='email' placeholder='Email' type='email')
+                    input(id='email' name='email' placeholder='Email' type='email' autofocus)
         div.actions
-            div.two.fluid.buttons
-                div.ui.positive.green.button
-                    i.checkmark.icon
+            div.ui.positive.green.button
+                i.checkmark.icon
+    //- PASSWORD MODAL
     div.ui.small.modal(id='editPassModal')
         i.close.icon
         div.header Change Password
-        div.content
-            div.ui.negative.hidden.message(id='editPassError')
-                p Please enter a password
+        div.content(style='padding-top:12px;')
+            div.ui.negative.hidden.message(id='editPassError' style='padding: 8px 20px; font-size:12px;')
+                ui.list(id='editPassList')
+                    li Hi
             form.ui.attached.fluid.segment.form
-                div.field
+                div.field(id='curPassField')
                     label Please enter your current password
-                    input(name='password' placeholder='Current Password' type='password')
+                    input(id='curpassword' name='password' placeholder='Current Password' type='password' autofocus)
                 div.two.fields
-                    div.field
+                    div.field(id='newPassField')
                         label New Password
-                        input(name='newpassword' placeholder='New Password' type='password')
-                    div.field
+                        input(id='newpassword' name='newpassword' placeholder='New Password' type='password')
+                    div.field(id='conPassField')
                         label Confirm Password
-                        input(name='conpassword' placeholder='Confirm New Password' type='password')
+                        input(id='conpassword' name='conpassword' placeholder='Confirm New Password' type='password')
         div.actions
-            div.two.fluid.buttons
-                div.ui.positive.green.button
-                    i.checkmark.icon
+            div.ui.positive.green.button
+                i.checkmark.icon
+    //- PHONE MODAL
     div.ui.small.modal(id='editPhoneModal')
         i.close.icon
         div.header Change Phone Number
-        div.content
-            div.ui.negative.hidden.message(id='editPhoneError')
-                p Please enter a password
-            form.ui.attached.fluid.segment.form
-                div.field
-                    label New Phone Number
-                    div.ui.labeled.input
-                        div.ui.label +1
-                        input(name='phoneNum' placeholder='Phone Number' type='tel')
+        div.content(style='padding-top:12px;')
+            div.ui.negative.hidden.message(id='editPhoneError' style='padding: 8px 20px; font-size:12px;')
+                ui.list(id='editPhoneList')
+                    li Hi
+            form.ui.attached.fluid.segment.form(style='text-align:center')
+                p(style='text-align:center') Please enter your new phone number:
+                div.field(id='currentNumberField')
+                    div.ui.input
+                        input(id='currentNumber' name='currentNumber' placeholder='Phone Number' type='tel' style='padding-left:45px; width:166px; text-align:center' autofocus)
+                p(style='text-align:center') Press the send button to get a verification code. Enter the code to complete the process:
+                div.field(id='newNumberTokenField')
+                    div.ui.input
+                        input(id='newNumberToken' name='newNumberToken' placeholder='Code' autofocus style='width:100px; text-align:center')
         div.actions
-            div.two.fluid.buttons
-                div.ui.positive.green.button
-                    i.checkmark.icon
+            div.ui.deny.primary.button Send
+            div.ui.positive.green.button
+                i.checkmark.icon
+    //- EPHONE MODAL
+    div.ui.small.modal(id='editEPhoneModal')
+        i.close.icon
+        div.header Change Emergency Number
+        div.content(style='padding-top:12px;')
+            div.ui.negative.hidden.message(id='editEPhoneError' style='padding: 8px 20px; font-size:12px;')
+                ui.list(id='editEPhoneList')
+                    li Hi
+            form.ui.attached.fluid.segment.form
+                div.field(id='emergencyNumberField')
+                    label New Emergency Number
+                    input(id='emergencyNumber' name='emergencyNumber' placeholder='Emergency Number' type='tel' style='padding-left:45px;' autofocus)
+        div.actions
+            div.ui.positive.green.button
+                i.checkmark.icon
+    //- DEVICE MODAL
+    div.ui.small.modal(id='editDeviceModal')
+        i.close.icon
+        div.header Change Emergency Number
+        div.content(style='padding-top:12px;')
+            div.ui.negative.hidden.message(id='editDeviceError' style='padding: 8px 20px; font-size:12px;')
+                ui.list(id='editDeviceList')
+                    li Hi
+            form.ui.attached.fluid.segment.form
+                div.field(id='deviceIdField')
+                    label New Device ID
+                    input(id='deviceId' name='deviceId' placeholder='Device ID' type='text' autofocus)
+        div.actions
+            div.ui.positive.green.button
+                i.checkmark.icon
+
     script(type='text/javascript').
         var userData = !{JSON.stringify(user)};
         var deviceData = !{JSON.stringify(device)};

@@ -77,44 +77,169 @@ function start() {
 	registerUpdateModals();
 }
 
-function registerUpdateModals() {
-    registerModal('editName', { name: 'name', id: 'userName' }, function() {
-        var fname = document.querySelector('[name="firstName"]').value
-        , lname = document.querySelector('[name="lastName"]').value;
+function emailLen() { return $('[name="email"]').val().length <= 0 }
+function emailVal() {
+	var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+	return !re.test($('[name="email"]').val());
+}
+function emailSame() { return $('[name="email"]').val() ==  userData.email; }
+function newpassLen() { return $('[name="newpassword"]').val().length <= 0; }
+function newpassLenSix() { return $('[name="newpassword"]').val().length < 6; }
+function curpassLen() { return $('[name="password"]').val().length <= 0; }
+function conpassLen() { return $('[name="conpassword"]').val().length <= 0; }
+function passSame() { return $('[name="newpassword"]').val() != $('[name="conpassword"]').val(); }
+function fnameLen() { return $('[name="firstName"]').val().length <= 0; }
+function lnameLen() { return $('[name="lastName"]').val().length <= 0; }
+function cphoneLen() { return $('#currentNumber').intlTelInput('getNumber').length <= 0; }
+function cphoneVal() { return !$('#currentNumber').intlTelInput('isValidNumber'); }
+function phoneTokenLen() { return $('#newNumberToken').val().length <= 0; }
+function ephoneLen() { return $('#emergencyNumber').intlTelInput('getNumber').length <= 0; }
+function ephoneVal() { return !$('#emergencyNumber').intlTelInput('isValidNumber'); }
+function ephoneSame() { return $('#emergencyNumber').intlTelInput('getNumber') == userData.emergencyNumber; }
+function deviceLen() { return $('[name="deviceId"]').val().length <= 0; }
+function deviceSame() { return $('[name="deviceId"]').val() == userData.deviceNumber; }
 
-        if(fname.length == 0 || lname.length == 0) return errorInModal('#editNameError', 'Please enter your name');
+function registerUpdateModals() {
+    registerModal('#editName', { name: 'name', id: '#userName' }, function() {
+        var fname = document.querySelector('[name="firstName"]').value
+        , lname = document.querySelector('[name="lastName"]').value
+        , toPost = true;
+
+		if(fnameLen()) {
+			 addErrorPre('Please enter your first name', '#editName', '#firstName', fnameLen);
+			 toPost = false;
+		}
+		if(lnameLen()) {
+			 addErrorPre('Please enter your last name', '#editName', '#lastName', lnameLen);
+			 toPost = false;
+		}
+		if(!toPost) return null;
         return (fname + ' ' + lname);
     });
 
-    registerModal('editEmail', { name: 'email', id: 'userEmail' }, function() {
-    	var email = document.querySelector('[name="email"]').value;
+    registerModal('#editEmail', { name: 'email', id: '#userEmail' }, function() {
+    	var email = document.querySelector('[name="email"]').value
+    	  , toPost = true;
 
-    	if(email.length == 0) return errorInModal('#editEmailError', 'Please enter your email');
-    	var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-    	if(!re.test(email)) return errorInModal('#editEmailError', 'Please enter a valid email');
-    	if(userData.email == email) return errorInModal('#editEmailError', 'This email is your current email');	
+		if(emailLen()) {
+			addErrorPre('Please enter your email', '#editEmail', '#email', emailLen);
+			toPost = false;
+		} else if(emailVal()) {
+			addErrorPre('Please enter a valid email', '#editEmail', '#email', emailVal);
+			toPost = false;
+		} else if(emailSame()) {
+			addErrorPre('This email is your current email', '#editEmail', '#email', emailSame);
+			toPost = false;
+		}
+		if(!toPost) return null;
     	return email;
     })
 
-    registerModal('editPass', { name: 'password', id: 'userPass' }, function() {
+    registerModal('#editPass', { name: 'password', id: '#userPass' }, function() {
     	var curpw = document.querySelector('[name="password"]').value
     	  , npw = document.querySelector('[name="newpassword"]').value
-    	  , cpw = document.querySelector('[name="conpassword"]').value;
+    	  , cpw = document.querySelector('[name="conpassword"]').value
+    	  , toPost = true;
 
-    	  if(curpw.length == 0) return errorInModal('#editPassError', 'Please enter your current password');
-    	  if(npw.length == 0) return errorInModal('#editPassError', 'Please enter your new password');
-    	  if(cpw.length == 0) return errorInModal('#editPassError', 'Please enter your new password again');
-    	  return { current: curpw, new: npw, confirm: cpw };
+		if(curpassLen()) {
+			addErrorPre('Please enter your current password', '#editPass', '#curPass', curpassLen);
+			toPost = false;
+		} else if(newpassLen()) {
+			addErrorPre('Please enter your new password', '#editPass', '#newPass', newpassLen);
+			toPost = false;
+		} else if(conpassLen()) {
+			addErrorPre('Please enter your new password again', '#editPass', '#conPass', conpassLen);
+			toPost = false;
+		}   	  
+		if(!toPost) return null;
+    	return { current: curpw, new: npw, confirm: cpw };
     })
 
-    registerModal('editPhone', { name: 'phone', id: 'userPhone'}, function() {
-    	var phoneNum = document.querySelector('[name="phoneNum"]').value
-
-    	if(phoneNum.length == 0) return errorInModal('#editPhoneError', 'Please enter your phone number');
-    	return phoneNum;
+    $('#currentNumber').intlTelInput({
+        utilsScript: '/javascripts/telUtils.js',
+        onlyCountries: ['us']
     });
 
+    registerModal('#editPhone', { name: 'phone', id: '#userPhone'}, function() {
+    	var phoneNum = $('#currentNumber').intlTelInput('getNumber')
+    	  , code = document.querySelector('[name="newNumberToken"]').value
+    	  , toPost = true;
+
+		if(cphoneLen()) {
+			addErrorPre('Please enter your phone number', '#editPhone', '#currentNumber', cphoneLen);
+			toPost = false;
+		} else if(cphoneVal()) {
+			addErrorPre('Please enter a valid phone number', '#editPhone', '#currentNumber', cphoneVal);
+			toPost = false;
+		}
+		if(phoneTokenLen()) {
+			addErrorPre('Please enter the verification code', '#editPhone', '#newNumberToken', phoneTokenLen);
+			toPost = false;
+		}
+		if(!toPost) return null;
+		return { phone: phoneNum, code: code };
+    });
+
+    $('#emergencyNumber').intlTelInput({
+        utilsScript: '/javascripts/telUtils.js',
+        onlyCountries: ['us']
+    });
+
+    registerModal('#editEPhone', { name: 'emergency', id: '#userEmergency' }, function() {
+    	var ephoneNum = $('#emergencyNumber').intlTelInput('getNumber')
+    	  , toPost = true;
+
+		if(ephoneLen()) {
+			addErrorPre('Please enter your emergency number', '#editEPhone', '#emergencyNumber', ephoneLen);
+			toPost = false;
+		} else if(ephoneVal()) {
+			addErrorPre('Please enter a valid phone number', '#editEPhone', '#emergencyNumber', ephoneVal);
+			toPost = false;
+		} else if(ephoneSame()) {
+			addErrorPre('This number is your current emergency number', '#editEPhone', '#emergencyNumber', ephoneSame);
+			toPost = false;
+		}
+		if(!toPost) return null;
+    	return ephoneNum;
+    })
+
+    registerModal('#editEPhone', { name: 'emergency', id: '#userEmergency' }, function() {
+    	var ephoneNum = $('#emergencyNumber').intlTelInput('getNumber')
+    	  , toPost = true;
+
+		if(ephoneLen()) {
+			addErrorPre('Please enter your emergency number', '#editEPhone', '#emergencyNumber', ephoneLen);
+			toPost = false;
+		} else if(ephoneVal()) {
+			addErrorPre('Please enter a valid phone number', '#editEPhone', '#emergencyNumber', ephoneVal);
+			toPost = false;
+		} else if(ephoneSame()) {
+			addErrorPre('This number is your current emergency number', '#editEPhone', '#emergencyNumber', ephoneSame);
+			toPost = false;
+		}
+		if(!toPost) return null;
+    	return ephoneNum;
+    });
+
+  	registerModal('#editDevice', { name: 'device', id: '#userDevice' }, function() {
+  		var deviceId = $('#deviceId').val()
+  		  , toPost = true;
+
+		if(deviceLen()) {
+			addErrorPre('Please enter your device ID', '#editDevice', '#deviceId', deviceLen);
+			toPost = false;
+		} else if(deviceSame()) {
+			addErrorPre('This ID is your current device ID', '#editDevice', '#deviceId', deviceSame);
+			toPost = false;
+		}
+
+		if(!toPost) return null;
+		return deviceId;
+  	});
+
 }
+
+
 
 function errorInModal(id, msg) {
 	$(id).children('p').get(0).innerHTML = msg;
@@ -266,12 +391,12 @@ function createDiv(className) {
 }
 
 function registerModal(id, info, getData) {
-	var modalId = '#' + id + 'Modal'
-	  , errorId = '#' + id + 'Error';
+	var modalId = id + 'Modal'
+	  , errorId = id + 'Error'
+	  , listId = id + 'List';
 
 	var infoName = info.name
-	  , infoId =  '#' + info.id
-
+	  , infoId =  info.id
     $(modalId)
         .modal({
             closable: false,
@@ -282,39 +407,93 @@ function registerModal(id, info, getData) {
                     $(modalId).find(':input').each(function() {
                         jQuery(this).val('');
                     })
+                    $(modalId).find('.field').each(function() {
+                    	jQuery(this).removeClass('error');
+                    })
                 })();
             },
             onDeny: function() {
-                console.log('denied!');
+            	if(id == '#editPhone') {
+	            	$(modalId).find('.field').each(function() {
+	                    	jQuery(this).removeClass('error');
+	                })
+	            	$(listId).empty();
+	            	$(errorId).addClass('hidden');
+            		var toPost = true;
+    				if(cphoneLen()) {
+						addErrorPre('Please enter your phone number', '#editPhone', '#currentNumber', cphoneLen);
+						toPost = false;
+					} else if(cphoneVal()) {
+						addErrorPre('Please enter a valid phone number', '#editPhone', '#currentNumber', cphoneVal);
+						toPost = false;
+					}
+					if(toPost) {
+						$.post('/sendverifyphone', { phone: $('#currentNumber').intlTelInput('getNumber')}, function(data, stat, xhr) {
+							if(data.status == codes.FAIL) {
+								// errorInModal('#verifyPhoneError', data.msg);
+								addError(id, '#currentNumber', data.msg);
+								$(errorId).removeClass('hidden');
+							}
+						});						
+					} else {
+						$(errorId).removeClass('hidden');
+					}
+
+            	}
                 return false;
             },
             onApprove: function() {
+            	$(modalId).find('.field').each(function() {
+                    	jQuery(this).removeClass('error');
+                })
+            	$(listId).empty();
+            	$(errorId).addClass('hidden');
 
                 var toSend = getData();
-                console.log('to send:' + toSend);
-                if(toSend == null) return false;
+                console.log('to send: ' + toSend);
+                if(toSend == null) {
+                	console.log('inside toSend == null');
+                	$(errorId).removeClass('hidden');
+                	return false;	
+                } 
 
-                $.post('/changeinfo', { info: infoName, data: toSend } , function(data, stat, xhr) {
-                    console.log(data);
-                    if(data.status == codes.FAILED) {
-                        $(errorId).children('p').get(0).innerHTML = data.msg;
-                        $(errorId).removeClass('hidden');
-                    } else {
-                        console.log('sucesss');
-                        if(id == 'editPass') $(infoId).html('••••••••••••');
-                        else $(infoId).html(data.data);
-                        if(id == 'editName') $('#nameMenu').html(data.data);
-                        $(errorId).addClass('hidden');
-                        $(modalId).modal('hide');
-                    }               
-                });
+                if(id == '#editPhone') {
+					$.post('/verifyphone', { phone: $('#currentNumber').intlTelInput('getNumber'), token: $('#newNumberToken').val()}, function(data, stat, xhr) {
+						if(data.status == codes.FAIL) {
+							addError(id, '#newNumberToken', data.msg);
+							$(errorId).removeClass('hidden');
+						} else {
+							$(infoId).html($('#currentNumber').intlTelInput('getNumber'));
+							$(modalId).modal('hide');
+						}
+					});
+                } else {
+	                $.post('/changeinfo', { info: infoName, data: toSend } , function(data, stat, xhr) {
+	                    console.log(data);
+	                    if(data.status == codes.FAILED) {
+	                        addError(id, data.fieldId, data.msg);
+	                        $(errorId).removeClass('hidden');
+	                    } else {
+	                        console.log(infoId);
+	                        if(id == '#editPass') $(infoId).html('••••••••••••');
+	                        else $(infoId).html(data.data);
+	                        if(id == '#editName') $('#nameMenu').html(data.data);
+	                        $(errorId).addClass('hidden');
+	                        // We do a refresh here due to the sensors not updating properly
+	                        // until we use socket.io
+	                        if(id == '#editDevice') location.reload();
+	                        else $(modalId).modal('hide');
+	                    }               
+	                });               	
+                }
+
                 return false
             }
     });
-    document.getElementById(id).addEventListener("click", function() {
-        $(modalId).modal('show');
-    }); 
 
+	$(id).click(function() {
+		$(modalId).modal('show');
+	})
 }
 
 function verifyPhone() {
@@ -346,7 +525,7 @@ function verifyPhone() {
 				 toPost = false;
 			}
 			if(verifyLen()) {
-				 addErrorPre('Please enter your verification code', '#verifyPhone', '#verifyToken', phoneLen);
+				 addErrorPre('Please enter your verification code', '#verifyPhone', '#verifyToken', verifyLen);
 				 toPost = false;
 			}
 
@@ -359,7 +538,6 @@ function verifyPhone() {
 					} else {
 						start();
 						$('#verifyPhoneModal').modal('hide');
-						
 					}
 				});
 			} else {
@@ -368,12 +546,29 @@ function verifyPhone() {
 			return false;
 		},
 		onDeny: function() {
+			var toPost = true;
+			$('#verifyPhoneList').empty();
+			$('#verifyPhoneError').addClass('hidden');
+
+			if(phoneLen()) {
+				 addErrorPre('Please enter your phone number', '#verifyPhone', '#verifyNumber', phoneLen);
+				 toPost = false;
+			}
+			else if(phoneValid()) {
+				 addErrorPre('Please enter a valid phone number', '#verifyPhone', '#verifyNumber', phoneLen);
+				 toPost = false;
+			}			
+			if(toPost) {
 			// Resend
-			$.post('/sendverifyphone', { phone: $('#verifyNumber').intlTelInput('getNumber')}, function(data, stat, xhr) {
-				if(data.status == codes.FAIL) {
-					errorInModal('#verifyPhoneError', data.msg);
-				}
-			});
+				$.post('/sendverifyphone', { phone: $('#verifyNumber').intlTelInput('getNumber')}, function(data, stat, xhr) {
+					if(data.status == codes.FAIL) {
+						errorInModal('#verifyPhoneError', data.msg);
+					}
+				});
+			} else {
+				$('#verifyPhoneError').removeClass('hidden');
+			}
+
 			return false;
 		}
 	}).modal('show');
@@ -403,11 +598,8 @@ function addError(errid, inputid, msg) {
 	var list = document.createElement('li');
 	var field = $(inputid+'Field');
 	list.innerHTML = msg;
-	console.log(msg);
-	console.log(errid);
 	$(errid + 'List').append(list);
 	if(field != null) field.addClass('error');
-	console.log('hereeee-------------');
 }
 
 // Verify phone comparators

@@ -342,14 +342,17 @@ post.register = function(req, res, next) {
 
 post.sendverifyphone = function(req, res) {
     var phoneNum = req.body.phone;
+    console.log('hererafwaefnaiogfnowangfoa');
+    console.log(phoneNum);
     /// Check if user changed the phone number
     // If user did, check if new phone number already used
     models.User.findById(req.user._id, function(err, user) {
         if(err) return res.send({ status: codes.status.FAIL, msg:err });
         if(!user) return res.send({ status: codes.status.FAIL, msg: 'SEVERE ERROR: Cannot find user' });
-        if(user.phoneNum != phoneNum) {
+        console.log(user.phoneNum);
+        if(user.phoneNumber != phoneNum) {
             // Check if new phone number already used
-            models.User.findOne({'phoneNum' : phoneNum}, function(err, user) {
+            models.User.findOne({'phoneNumber' : phoneNum}, function(err, user) {
                 if(err) return res.send({ status: codes.status.FAIL, msg:err });
                 if(user) return res.send({ status: codes.status.FAIL, msg: 'Phone number already used' });
                 // If not used yet, make phone token
@@ -374,13 +377,14 @@ post.sendverifyphone = function(req, res) {
         } else {
             // Proceed immediately to making a phone token
             // Remove existing token(s)
+            console.log('hereeee');
             models.PhoneToken.remove({ userId : toId(req.user._id) }, function(err) {
                 if(err) return res.send({ status: codes.status.FAIL, msg: err });
                 var phoneToken = models.PhoneToken();
                 phoneToken.token = (Math.floor(Math.random() * 1000000)).toString();
                 phoneToken.userId = toId(req.user._id);
                 phoneToken.phoneNumber = phoneNum;
-
+                console.log('hereeeee');
                 phoneToken.save(function(err) {
                     if(err) return res.send({ status: codes.status.FAIL, msg: err });
 
@@ -507,7 +511,7 @@ post.changeinfo = function(req, res) {
         // Check if email is already used
         models.User.findOne({'email' : email}, function(err, user) {
             if(err) return res.send({ status: codes.status.FAILED, msg: err });
-            if(user) return res.send({ status: codes.status.FAILED, msg: 'Email already in use' });
+            if(user) return res.send({ status: codes.status.FAILED, msg: 'Email already in use', fieldId: '#email' });
             models.User.findById(req.user._id, function(err, user) {
                 console.log('hereee');
                 user.email = email;
@@ -524,13 +528,13 @@ post.changeinfo = function(req, res) {
         var currentpw = req.body.data.current
           , newpw = req.body.data.new
           , confirmpw = req.body.data.confirm;
-        if(newpw.length < 6) return res.send({ status: codes.status.FAILED, msg: 'Your password should be at least 6 characters long' });
-        if(newpw != confirmpw) return res.send({ status: codes.status.FAILED, msg: 'The new passwords do not match' });
         models.User.findById(req.user._id, function(err, user) {
             if(err) return res.send({ status: codes.status.FAILED, msg: err });
             if(!user) return res.send( {status: codes.status.FAILED, msg: 'User does not exist' });
             var hashed_oldpw = toolkit.encrypt(currentpw);
-            if(hashed_oldpw != user.password) return res.send({ status: codes.status.FAILED, msg: 'The current password you entered is invalid' });
+            if(hashed_oldpw != user.password) return res.send({ status: codes.status.FAILED, msg: 'The current password you entered is invalid' , fieldId: '#curPass'});
+            if(newpw.length < 6) return res.send({ status: codes.status.FAILED, msg: 'Your password should be at least 6 characters long', fieldId: '#newPass' });
+            if(newpw != confirmpw) return res.send({ status: codes.status.FAILED, msg: 'The new passwords do not match', fieldId: '#conPass' });
             var hashed_newpw = toolkit.encrypt(newpw);
             user.password = hashed_newpw;
             user.save(function(err) {
@@ -539,10 +543,11 @@ post.changeinfo = function(req, res) {
             })
         });
     } else if(info == 'phone') {
-        var phoneNum = req.body.data;
+        var phoneNum = req.body.data.phone
+          , verCode = req.body.data.code;
         models.User.findOne({'phoneNumber': phoneNum}, function(err, user) {
             if(err) return res.send({ status: codes.status.FAILED, msg: err });
-            if(user) return res.send({ status: codes.status.FAILED, msg: 'The phone number is already in use' });
+            if(user) return res.send({ status: codes.status.FAILED, msg: 'The phone number is already in use', fieldId: '#currentNumber' });
             models.User.findById(req.user._id, function(err, user) {
                 if(err) return res.send({ status: codes.status.FAILED, msg: err });
                 if(!user) return res.send( {status: codes.status.FAILED, msg: 'User does not exist' });
@@ -553,21 +558,57 @@ post.changeinfo = function(req, res) {
                 })
             });
         })
+    } else if(info == 'emergency') {
+        var ephoneNum = req.body.data;
+        models.User.findById(req.user._id, function(err, user) {
+            if(err) return res.send({ status: codes.status.FAILED, msg: err });
+            if(!user) return res.send({ status: codes.status.FAILED, msg: 'SEVERE ERROR: Cannot find user' });
+            user.emergencyNumber = ephoneNum;
+            user.save(function(err) {
+                if(err) return res.send({ status: codes.status.FAILED, msg: err });
+                return res.send({ status: codes.status.OK, data: ephoneNum })
+            });
+        }) ;
+
     } else if(info == 'device') {
         var deviceId = req.body.data;
-        models.User.findOne({'deviceId': deviceId}, function(err, user) {
+
+        // Check if new deviceId is being used
+        models.Device.findOne({'deviceNumber' : deviceId}, function(err, device) {
             if(err) return res.send({ status: codes.status.FAILED, msg: err });
-            if(user) return res.send({ status: codes.status.FAILED, msg: 'The phone number is already in use' });
+            if(device) return res.send({ status: codes.status.FAILED, msg: 'Device already used', fieldId: '#deviceId'})
+
+            // Delete existing device
             models.User.findById(req.user._id, function(err, user) {
                 if(err) return res.send({ status: codes.status.FAILED, msg: err });
-                if(!user) return res.send( {status: codes.status.FAILED, msg: 'User does not exist' });
-                user.deviceId = deviceId;
-                user.save(function(err) {
+                if(!user) return res.send({ status: codes.status.FAILED, msg: 'SEVERE ERROR: Cannot find user' });
+                // Delete device
+                models.Device.findById(user.deviceId, function(err, device) {
                     if(err) return res.send({ status: codes.status.FAILED, msg: err });
-                    return res.send({ status: codes.status.OK, data: deviceId });
+                    if(!device) return res.send({ status: codes.status.FAILED, msg: 'SEVERE ERROR: Cannot find device' });
+                    device.remove();
+                    // Create new device
+                    var newDevice = new models.Device();
+                    newDevice.deviceNumber = deviceId;
+                    newDevice.sensors = {};
+                    newDevice.priorities = {};
+                    newDevice.isActivated = false;
+                    newDevice.isSynced = true;
+                    console.log('after newdevice make');
+                    newDevice.save(function(err) {
+                        if(err) return res.send({ status: codes.status.FAILED, msg: err });
+                        // Update deviceId in user doc
+                        user.deviceNumber = newDevice.deviceNumber;
+                        user.deviceId = toId(newDevice._id);
+                        user.save(function(err) {
+                            if(err) return res.send({ status: codes.status.FAILED, msg: err });
+                            return res.send({ status: codes.status.OK, data: deviceId });
+                        })
+                    })                      
                 })
-            });
-        })
+            })
+        });
+
     }
 
 }

@@ -273,6 +273,8 @@ get.alert = function(req, res) {
             if(err) return res.send('Error in finding user');
             if(!user) return res.send('User not found');
             // Get sensor name and priority
+            if(device.sensors == null) return res.send('Sensor doesnt exist');
+            if(device.priorities == null) return res.send('Priority doesnt exist');
             var sensor = device.sensors[req.query.sensor]
               , priority = device.priorities[sensor];
             if(!sensor) return res.send('Error in getting sensor');
@@ -281,15 +283,15 @@ get.alert = function(req, res) {
             // Make alert document.
             var alert = models.Alert();
             alert._id = shortId.generate();
-            // Generate 6 length random numbers for token.
-            alert.token = (Math.floor(Math.random() * 1000000)).toString();
+            // Generate R + 5 length random numbers for token.
+            alert.token = 'R' + (Math.floor(Math.random() * 100000)).toString();
             alert.phoneNumber = user.phoneNumber;
 
             alert.save(function(err) {
                 if(err) return res.send(err);
                 message = 'This is a CAPS Device alert. Your ' + sensor +' sensor has picked up something inside your car. ';
                 message += 'Please reply this code to confirm this alert: ' + alert.token;
-                transmitter.sendAlertText(user.phoneNumber, message);
+                transmitter.sendAlertText(user.phoneNumber, message, user.emergencyNumber);
                 res.send('Text message sent');
             });
         });
@@ -590,8 +592,8 @@ post.changeinfo = function(req, res) {
                     // Create new device
                     var newDevice = new models.Device();
                     newDevice.deviceNumber = deviceId;
-                    newDevice.sensors = {};
-                    newDevice.priorities = {};
+                    newDevice.sensors = new Object();
+                    newDevice.priorities = new Object();
                     newDevice.isActivated = false;
                     newDevice.isSynced = true;
                     console.log('after newdevice make');

@@ -74,11 +74,15 @@ var accountSid = 'AC3d78ab39ab36ec6d03c2b4100ab1be42';
 var authToken = '713ab9cea3304d485ff4b3c23cf12276'; 
 var phoneNumber = "+15125806512";
 
-exports.sendAlertText = function(number, toSend) {
-    var waitTime = 15000;
+exports.sendAlertText = function(number, toSend, enumber) {
+    var waitTime = 30000;
      
     //require the Twilio module and create a REST client 
     var client = require('twilio')(accountSid, authToken); 
+    //var callUrl = '../public/call.xml';
+    //var callUrl = '../other/call.xml';
+    // var callUrl = 'http://localhost/call.xml';
+    var callUrl = 'http://70dfffd2.ngrok.com/call.xml';
      
     client.messages.create({ 
         to: number, 
@@ -87,15 +91,15 @@ exports.sendAlertText = function(number, toSend) {
     }, function(err, message) { 
         if(err) console.log(err);
         setTimeout(function() {
-            console.log("15 seconds elapsed since text, calling");
+            console.log("30 seconds elapsed since text, calling");
             // Check if alert is gone
             models.Alert.findOne({'phoneNumber' : number}, function(err, alert) {
                 if(err) return console.log(err);
                 if(!alert) return console.log('Error: alert document not found');
                 // If alert is still there, initiate call and delete the alert.
                 client.calls.create({ 
-                    url : 'http://demo.twilio.com/docs/voice.xml',
-                    to: number, 
+                    url : callUrl,
+                    to: enumber, 
                     from: phoneNumber,   
                     method: "GET",  
                     record: "false" 

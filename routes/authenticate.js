@@ -80,8 +80,8 @@ module.exports = function(passport, LocalStrategy) {
                             // Doesn't exist yet. Create new device and user.
                             var newDevice = new db.Device();
                             newDevice.deviceNumber = req.param('deviceNumber');
-                            newDevice.sensors = {};
-                            newDevice.priorities = {};
+                            newDevice.sensors = new Object();
+                            newDevice.priorities = new Object();
                             newDevice.isActivated = false;
                             newDevice.isSynced = true;
 

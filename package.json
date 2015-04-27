@@ -27,6 +27,7 @@
     "nodemailer" : "*",
     "scribe-js" : "*",
     "twilio" : "*",
-    "intl-tel-input" : "*"
+    "intl-tel-input" : "*",
+    "socket.io": "*"
   }
 }

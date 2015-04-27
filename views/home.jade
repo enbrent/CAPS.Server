@@ -9,7 +9,7 @@ block content
             div.text.item(id='nameMenu') #{user.firstName} #{user.lastName}
             a.item(href='/logoff')
                 <i class="sign out icon"></i>
-    div.container(style='width:650px; position:relative; margin:0px auto' id='info')
+    div.container(style='width:500px; position:relative; margin:0px auto' id='info')
         div.column.three.wide
             div.ui.top.attached.tabular.menu.three.item
                 div.active.item(data-tab="sensor") Sensors
@@ -18,7 +18,39 @@ block content
             div.ui.bottom.attached.active.tab.segment(data-tab="sensor" id="sensorTab")
                 form.ui.form(id='updateSensorForm' method='POST' action='/changepriority')
             div.ui.bottom.attached.tab.segment(data-tab="alert")
-                p Maybe later
+                div.ui.three.column.grid
+                    div.column
+                        div.ui.fluid.card
+                            div.content
+                                div.header March 20, 2015
+                                div.meta 7:15 PM
+                            div.extra.content More info
+                    div.column
+                        div.ui.fluid.card
+                            div.content
+                                div.header March 19, 2015
+                                div.meta 12:15 AM
+                            div.extra.content More info
+                            div.extra.content More info
+                    div.column
+                        div.ui.fluid.card
+                            div.content
+                                div.header February 20, 2015
+                                div.meta 1:15 PM
+                            div.extra.content More info
+                div.ui.three.column.grid
+                    div.column
+                        div.ui.fluid.card
+                            div.content
+                                div.header March 20, 2015
+                                div.meta 7:15 PM
+                            div.extra.content More info
+                    div.column
+                        div.ui.fluid.card
+                            div.content
+                                div.header March 19, 2015
+                                div.meta 12:15 AM
+                            div.extra.content More info
             div.ui.bottom.attached.tab.segment(data-tab="account")
                 div.ui.divided.very.relaxed.list
                     div.item

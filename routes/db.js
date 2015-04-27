@@ -25,7 +25,11 @@ var deviceSchema = new Schema({
 var alertSchema = new Schema({
   _id : String,
   phoneNumber : Number,
-  token : String
+  token : String,
+  isActive: Boolean,
+  sensors: [String],
+  status: String,
+  date: { type: Date, default: Date.now }
 });
 
 var confirmTokenSchema = new Schema({

@@ -27,8 +27,9 @@ var updateButton = function() {
 
 }
 
+var socket;
 $(document).ready(function() {
-	console.log('inside start manager.js');
+	console.log('inside start manager.js');	
 
 	console.log(deviceData);
 
@@ -37,6 +38,16 @@ $(document).ready(function() {
 	} else {
 		start();
 	}
+
+	// Register for socket.io
+	socket = io.connect('http://localhost');
+	socket.emit('register', {id : deviceData.deviceNumber })
+	socket.on('alert', function(alert) {
+		console.log(alert);
+		console.log(alert.date);
+		console.log(alert.time);
+	});
+
 	console.log('inside end manager.js');
 
 }); 

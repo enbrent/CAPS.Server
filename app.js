@@ -24,9 +24,15 @@ var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , session = require('express-session')
   , mongostore = require('connect-mongo')(session)
-  , scribe = require('scribe-js')();
+  , scribe = require('scribe-js')()
 
 var app = express();
+
+// Initialize socket.io
+var socketio = require('socket.io')
+  , io = socketio();
+
+app.io = io;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -49,6 +55,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
+
 var isAuthenticated = function(req, res, next) {
     if(req.isAuthenticated())
         return next();
@@ -64,6 +73,7 @@ var userLoggedIn = function(req, res, next)  {
 app.get('/debug', routes.get.debug);
 app.get('/genconfirm', routes.get.genconfirm);
 app.get('/genreset', routes.get.genreset);
+app.post('/emit', routes.post.emit);
 app.get('/ping', routes.get.ping);
 // Main pages
 app.get('/', userLoggedIn, routes.get.index);
@@ -89,6 +99,14 @@ app.get('/verify/*', routes.get.verify);
 // Android & Phone
 app.post('/reply', routes.post.reply);
 app.get('/logina', routes.get.logina);
+
+
+// io.on('connection', function (socket) {
+//   socket.emit('news', { hello: 'world' });
+//   socket.on('my other event', function (data) {
+//     console.log(data);
+//   });
+// });
 
 
 /// catch 404 and forward to error handler

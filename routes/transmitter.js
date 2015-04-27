@@ -74,7 +74,7 @@ var accountSid = 'AC3d78ab39ab36ec6d03c2b4100ab1be42';
 var authToken = '713ab9cea3304d485ff4b3c23cf12276'; 
 var phoneNumber = "+15125806512";
 
-exports.sendAlertText = function(number, toSend, enumber) {
+exports.sendAlertText = function(number, toSend, enumber, token) {
     var waitTime = 30000;
      
     //require the Twilio module and create a REST client 
@@ -93,10 +93,10 @@ exports.sendAlertText = function(number, toSend, enumber) {
         setTimeout(function() {
             console.log("30 seconds elapsed since text, calling");
             // Check if alert is gone
-            models.Alert.findOne({'phoneNumber' : number}, function(err, alert) {
+            models.Alert.findOne({'phoneNumber': number, 'isActive': true, 'token': token}, function(err, alert) {
                 if(err) return console.log(err);
                 if(!alert) return console.log('Error: alert document not found');
-                // If alert is still there, initiate call and delete the alert.
+                // If alert is still there, initiate call and set alert to inactive.
                 client.calls.create({ 
                     url : callUrl,
                     to: enumber, 
@@ -108,7 +108,11 @@ exports.sendAlertText = function(number, toSend, enumber) {
                     // console.log(call); 
                     return;
                 });
-                alert.remove();
+                alert.isActive = false;
+                alert.status = 'Called emergency number: ' + enumber;
+                alert.save(function(err) {
+                    if(err) return console.log(err);
+                })
             });
         }, waitTime);
     });

@@ -5,6 +5,7 @@ var express = require('express')
   , toolkit = require('./toolkit')
   , codes = require('./codes')
   , transmitter = require('./transmitter')
+  , emitter = require('./emitter')
   , shortId = require('shortid');
 
 var mongoose = require('mongoose')
@@ -24,6 +25,10 @@ get.debug = function(req, res) {
     res.render('debug', { title: 'Debug page' });
 }
 
+post.emit = function(req, res) {
+    emitter.emit();
+    return;
+}
 
 get.index = function(req, res) {
 	res.render('index', { title: 'CAPS Login' , message: req.flash('message')});
@@ -283,15 +288,23 @@ get.alert = function(req, res) {
             // Make alert document.
             var alert = models.Alert();
             alert._id = shortId.generate();
-            // Generate R + 5 length random numbers for token.
-            alert.token = 'R' + (Math.floor(Math.random() * 100000)).toString();
+            // Generate A + 5 length random numbers for token.
+            alert.token = 'A' + (Math.floor(Math.random() * 100000)).toString();
             alert.phoneNumber = user.phoneNumber;
+            alert.isActive = true;
+            alert.sensors.push(sensor);
+            alert.status = 'Alert code sent to ' + user.phoneNumber;
 
-            alert.save(function(err) {
+            alert.save(function(err) { 
                 if(err) return res.send(err);
                 message = 'This is a CAPS Device alert. Your ' + sensor +' sensor has picked up something inside your car. ';
                 message += 'Please reply this code to confirm this alert: ' + alert.token;
-                transmitter.sendAlertText(user.phoneNumber, message, user.emergencyNumber);
+                var msg = alert.toJSON();
+                msg.date = alert.date.toDateString();
+                msg.time = alert.date.toTimeString();
+                emitter.emit('alert', {userId: device.deviceNumber, msg: msg});
+                transmitter.sendAlertText(user.phoneNumber, message, user.emergencyNumber, alert.token );
+
                 res.send('Text message sent');
             });
         });
@@ -311,14 +324,21 @@ post.reply = function(req, res) {
     var phoneNum = req.body.From
       , alertToken = req.body.Body;
 
+
+    console.log('inside reply post'); 
+
     // Lookup db if token is valid
-    models.Alert.findOne({"token":alertToken}, function(err, alert){
+    models.Alert.findOne({'token': alertToken, 'isActive': true}, function(err, alert){
         if(err) return console.log(err);
         if(!alert) return console.log('invalid alert token'); // might have to retext
 
-        // Delete alert document.
-        console.log('document shouldve been removed.');
-        alert.remove();
+        // Set alert document to inactive.
+        console.log('document shouldve deactivated');
+        alert.isActive = false
+        alert.status = phoneNum + ' replied with alert code';
+        alert.save(function(err) {
+            if(err) return console.log(err);
+        })
     });
 
 }

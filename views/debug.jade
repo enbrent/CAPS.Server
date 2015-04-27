@@ -7,3 +7,6 @@ block content
     div.confirmtoken
         form(name="reset-token", action="/genreset")
             button#btnSubmit(type="submit") Generate reset token
+    div.emit
+        form(name="emit", action="/emit" method='POST')
+            button#btnSubmit(type="submit") Emit with socket.io

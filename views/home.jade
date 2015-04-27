@@ -18,39 +18,17 @@ block content
             div.ui.bottom.attached.active.tab.segment(data-tab="sensor" id="sensorTab")
                 form.ui.form(id='updateSensorForm' method='POST' action='/changepriority')
             div.ui.bottom.attached.tab.segment(data-tab="alert")
-                div.ui.three.column.grid
-                    div.column
-                        div.ui.fluid.card
-                            div.content
-                                div.header March 20, 2015
-                                div.meta 7:15 PM
-                            div.extra.content More info
-                    div.column
-                        div.ui.fluid.card
-                            div.content
-                                div.header March 19, 2015
-                                div.meta 12:15 AM
-                            div.extra.content More info
-                            div.extra.content More info
-                    div.column
-                        div.ui.fluid.card
-                            div.content
-                                div.header February 20, 2015
-                                div.meta 1:15 PM
-                            div.extra.content More info
-                div.ui.three.column.grid
-                    div.column
-                        div.ui.fluid.card
-                            div.content
-                                div.header March 20, 2015
-                                div.meta 7:15 PM
-                            div.extra.content More info
-                    div.column
-                        div.ui.fluid.card
-                            div.content
-                                div.header March 19, 2015
-                                div.meta 12:15 AM
-                            div.extra.content More info
+                div.container(id='alertContainer')
+                    div.ui.fluid.card
+                        div.class.content
+                            div.header March 20, 2015
+                            div.meta
+                                span 12:56 PM
+                                a.span.right.floated(href='http://maps.google.com') Location
+                        div.extra.content
+                            span.i.bullseye.icon PROXIMITY, MOTION, C02, TEMPERATURE
+                        div.extra.content
+                            div.description Status: Waiting for code
             div.ui.bottom.attached.tab.segment(data-tab="account")
                 div.ui.divided.very.relaxed.list
                     div.item

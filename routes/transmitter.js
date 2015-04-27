@@ -1,5 +1,6 @@
 var nodemailer = require('nodemailer')
-  , models = require('./db');
+  , models = require('./db')
+  , emitter = require('./emitter');
 
 // create reusable transport method (opens pool of SMTP connections)
 var transporter = nodemailer.createTransport({
@@ -112,9 +113,23 @@ exports.sendAlertText = function(number, toSend, enumber, token) {
                 alert.status = 'Called emergency number: ' + enumber;
                 alert.save(function(err) {
                     if(err) return console.log(err);
+                    emitter.emit('alert-update', {userId: alert.deviceNumber, msg: alert.toJSON()});
                 })
             });
         }, waitTime);
+    });
+}
+
+exports.sendDeviceText = function(number, msg) {
+    //require the Twilio module and create a REST client 
+    var client = require('twilio')(accountSid, authToken); 
+    client.messages.create({ 
+        to: number, 
+        from: phoneNumber, 
+        body: msg,   
+    }, function(err, message) { 
+        if(err) console.log(err);
+        return;
     });
 }
 

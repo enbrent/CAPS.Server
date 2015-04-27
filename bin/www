@@ -17,5 +17,5 @@ io.attach(server);
 
 // Attach to emitter.js
 emitter.init(io)
-emitter.emit();
+//emitter.emit();
 

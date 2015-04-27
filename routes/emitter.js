@@ -15,8 +15,24 @@ module.exports.init = function(socketio) {
 }
 
 module.exports.emit = function(arg, data) {
-	if(arg == 'alert') {
-		emitAlert(data);
+	console.log(data);
+	if(users[data.userId]) {
+		// var length = users[data.userId].length;
+		for(var k = 0; k < users[data.userId].length; k += 1) {
+			var to = users[data.userId][k];
+			// console.log('inside emit alert: ' + k);
+			var connection = io.sockets.connected[to];
+			if(!connection) {
+				console.log('invalid connection detected, deleting..');
+				users[data.userId].splice(k, 1);
+				k -= 1;
+			} else {
+				// io.sockets.connected[to].emit('alert', data.msg);	
+				if(arg == 'alert') io.sockets.connected[to].emit('alert', data.msg);
+				else if(arg == 'alert-update') io.sockets.connected[to].emit('alert-update', data.msg);
+			}
+			
+		}
 	}
 }
 
@@ -41,6 +57,10 @@ var emitAlert = function(data) {
 		}	
 	}
 	
+}
+
+var emitUpdateAlert = function(data) {
+
 }
 
 var doit = function() {

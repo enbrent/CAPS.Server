@@ -29,6 +29,7 @@ var alertSchema = new Schema({
   isActive: Boolean,
   sensors: [String],
   status: String,
+  deviceNumber: String,
   date: { type: Date, default: Date.now }
 });
 

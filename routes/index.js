@@ -303,7 +303,7 @@ get.alert = function(req, res) {
                 msg.date = alert.date.toDateString();
                 msg.time = alert.date.toTimeString();
                 emitter.emit('alert', {userId: device.deviceNumber, msg: msg});
-                transmitter.sendAlertText(user.phoneNumber, message, user.emergencyNumber, alert.token );
+                //transmitter.sendAlertText(user.phoneNumber, message, user.emergencyNumber, alert.token );
 
                 res.send('Text message sent');
             });
@@ -322,24 +322,197 @@ get.reply = function(req, res) {
 
 post.reply = function(req, res) {
     var phoneNum = req.body.From
-      , alertToken = req.body.Body;
+      , content = req.body.Body;
+    console.log(content);
 
+    try {
+        if(!content) return;
 
-    console.log('inside reply post'); 
+        if(content.charAt(0) == 'A') {
+            // Do reply to alert stuff..
+            var alertToken = content;
+            // Lookup db if token is valid
+            models.Alert.findOne({'token': alertToken, 'isActive': true}, function(err, alert){
+                if(err) return console.log(err);
+                if(!alert) return console.log('invalid alert token'); // might have to retext
 
-    // Lookup db if token is valid
-    models.Alert.findOne({'token': alertToken, 'isActive': true}, function(err, alert){
-        if(err) return console.log(err);
-        if(!alert) return console.log('invalid alert token'); // might have to retext
+                // Set alert document to inactive.
+                console.log('document shouldve deactivated');
+                alert.isActive = false
+                alert.status = phoneNum + ' replied with alert code';
+                alert.save(function(err) {
+                    if(err) return console.log(err);
+                    emitter.emit('alert-update', {userId: alert.deviceNumber, msg: alert.toJSON()});
+                })
+            });
+        } else {
+            var args = content.split('.');
+            if(args[0] == 'rgs') {
+                console.log(args);
+                // Do registration stuff
+                var deviceNumber = args[1];
+                var sensorCount = args[2];
+                // Check if board is registered.
+                models.Device.findOne({'deviceNumber': deviceNumber}, function(err, device) {
+                    if(err) return transmitter.sendDeviceText(phoneNum, 'Error on finding registered device');
+                    if(!device) return transmitter.sendDeviceText(phoneNum, 'Device is not registered');
 
-        // Set alert document to inactive.
-        console.log('document shouldve deactivated');
-        alert.isActive = false
-        alert.status = phoneNum + ' replied with alert code';
-        alert.save(function(err) {
-            if(err) return console.log(err);
-        })
-    });
+                    var m_device = device.toJSON(); // Mongoose doesn't return JSON
+                    var sensors = {} // We will replace this every request
+                      , priorities = priorities_o = m_device.priorities // Only update
+                      , numSensor = parseInt(sensorCount);        
+
+                    // Do this because toJSON() sets {} to undefined.
+                    sensors = sensors ? sensors : {};
+                    priorities = priorities ? priorities : {};
+
+                    priorities_o = toolkit.clone(priorities);
+
+                    // Set all sensors to removed-state.
+                    for(key in priorities) {
+                        if(priorities.hasOwnProperty(key)) {
+                            priorities[key] = -1;
+                        }
+                    }
+
+                    console.log(priorities);
+                    console.log(priorities_o)
+
+                    // Parse sensors from query. 
+                    for(var i = 0; i < numSensor; i += 1) {
+                        var sNum = 's' + i.toString();
+                        var sensor = args[i+3];
+                        console.log('sensor is: ' + sensor);
+                        // Map sensor-name.
+                        if(sensor) {
+                            sensors[sNum] = sensor;
+                            // If priority doesn't exist/removed-state, set to 0.
+                            priorities[sensor] = priorities_o[sensor] ? 
+                            priorities_o[sensor] == -1 ? 0 : priorities_o[sensor] : 
+                            0;
+                        }
+                    }
+
+                    console.log(priorities);
+
+                    // Sort priorities for shifting.
+                    var p_array = []
+                      , f_array = [];
+
+                    // Get values.
+                    for(var sensor in priorities) {
+                        p_array.push([sensor, priorities[sensor]]);
+                    }
+
+                    p_array.sort(function(a,b) { return a[1]-b[1]} );
+
+                    var pr = 0;
+                    for(var i = 0; i < p_array.length; i += 1) {
+                        // Remove "removed-state" sensors (AKA the ones not requested).
+                        if(p_array[i][1] != -1) { 
+                            // Shift priorities: temp=1, cap=3 --> temp=1, cap=2
+                            p_array[i][1] = p_array[i][1] != pr ? ++pr : pr;
+                            f_array.push(p_array[i]);
+                            // Update actual priority object.
+                            priorities[p_array[i][0]] = p_array[i][1];
+                        }
+                    }
+
+                    // Update device document in db.
+                    device.sensors = sensors;
+                    device.priorities = priorities;
+                    device.isActivated = true;
+                    device.isSynced = true;
+                    device.save(function(err) {
+                        // if(err) return res.send('Error on updating device');
+                        if(err) return transmitter.sendDeviceText(phoneNum, 'Error on updating device');
+                    })
+
+                    // Construct response.
+                    var response = "";
+
+                    for(var i = 0; i < numSensor; i += 1) {
+                        var sNum = "s" + i.toString();
+                        response += i + "=" + priorities[sensors[sNum]];
+                        if(i != numSensor - 1) { response += ":"; }
+                    }
+
+                    console.log(response);
+                    response = 'WORD' + response;
+                    if(device.sensors == null) return transmitter.sendDeviceText(phoneNum, '0');
+                    else return transmitter.sendDeviceText(phoneNum, response);
+                });
+            } else if(args[0] == 'alert') {
+                // Do alert stuff
+                // query: alert.deviceid.2.s0.s1
+                // Check if board is registered
+                var deviceNumber = args[1];
+                var sensorCount = parseInt(args[2]);
+                models.Device.findOne({'deviceNumber':deviceNumber}, function(err, device) {
+                    if(err) return transmitter.sendDeviceText(phoneNum, 'Error in finding registered device');
+                    if(!device) return transmitter.sendDeviceText(phoneNum, 'Device not registered');
+                    // Get the phone number from user.
+                    models.User.findOne({'deviceNumber':deviceNumber}, function(err, user) {
+                        if(err) return transmitter.sendDeviceText(phoneNum, 'Error in finding user');
+                        if(!user) return transmitter.sendDeviceText(phoneNum, 'User not found');
+                        // Get sensor name and priority
+                        if(device.sensors == null) return transmitter.sendDeviceText(phoneNum, 'Sensor doesnt exist');
+                        if(device.priorities == null) return transmitter.sendDeviceText(phoneNum, 'Priority doesnt exist');
+
+                        var s_array = [];
+                        for(var i = 0; i < sensorCount; i += 1) {
+                            var sensor = device.sensors[args[i+3]]
+                              , priority = device.priorities[sensor];
+                            if(!sensor) return transmitter.sendDeviceText(phoneNum, 'Error in getting sensor');
+                            if(priority <= 0) return transmitter.sendDeviceText(phoneNum, 'Sensor does not exist/turned off');
+                            s_array.push(sensor);
+                        }
+
+                        // Make alert document.
+                        var alert = models.Alert();
+                        alert._id = shortId.generate();
+                        // Generate A + 5 length random numbers for token.
+                        alert.token = 'A' + (Math.floor(Math.random() * 100000)).toString();
+                        alert.phoneNumber = user.phoneNumber;
+                        alert.isActive = true;
+                        alert.deviceNumber = deviceNumber;
+                        // alert.sensors.push(sensor);
+                        alert.sensors = s_array;
+                        alert.status = 'Alert code sent to ' + user.phoneNumber;
+
+                        alert.save(function(err) { 
+                            if(err) return transmitter.sendDeviceText(phoneNum, err);
+                            var sensorString = '';
+                            for(var k = 0; k < s_array.length; k += 1) {
+                                sensorString += s_array[k];
+                                if(k != s_array.length - 1) sensorString += ', ';
+                            }
+                            message = 'This is a CAPS Device alert. Your ' + sensorString +'sensor(s) has picked up something inside your car. ';
+                            message += 'Please reply this code to confirm this alert: ' + alert.token;
+                            var msg = alert.toJSON();
+                            msg.date = alert.date.toDateString();
+                            msg.time = alert.date.toTimeString();
+                            msg.sensors = sensorString;
+                            emitter.emit('alert', {userId: device.deviceNumber, msg: msg});
+                            transmitter.sendAlertText(user.phoneNumber, message, user.emergencyNumber, alert.token );
+                            console.log('Text message sent');
+                            // res.send('Text message sent');
+                        });
+                    });
+                    
+                });
+            } else {
+                // Return error 
+                return transmitter.sendDeviceText(phoneNum, 'Invalid query');
+            }
+        }
+
+        console.log('inside reply post'); 
+    } catch(e) {
+        console.log(e);
+        return transmitter.sendDeviceText(phoneNum, 'Error');
+    }
+    
 
 }
 // -----------------------------------------------------------

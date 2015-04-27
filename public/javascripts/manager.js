@@ -27,6 +27,54 @@ var updateButton = function() {
 
 }
 
+// div.ui.fluid.card
+//     div.content
+//         div.header March 20, 2015
+//         div.meta
+//             span 12:56 PM
+//             a.span.right.floated(href='http://maps.google.com') Location
+//     div.extra.content
+//         span PROXIMITY, MOTION, C02, TEMPERATURE
+//     div.extra.content
+//         div.description Status: Waiting for code
+
+function createAlert(alert) {
+	var container = $('#alertContainer');
+	var card = createDiv('ui fluid card');
+
+	var content = createDiv('content');
+	var header = createDiv('header');
+	header.innerHTML = alert.date;
+	var meta = createDiv('meta');
+	var time = document.createElement('span');
+	time.innerHTML = alert.time;
+	var loc = document.createElement('a');
+	$(loc).addClass('span right floated');
+	$(loc).attr('href', 'http://maps.google.com');
+	$(loc).html('Location');
+	$(meta).append(time);
+	$(meta).append(loc);
+	$(content).append(header);
+	$(content).append(meta);
+
+	var extraSensor = createDiv('extra content');
+	var sensors = document.createElement('span');
+	sensors.innerHTML = alert.sensors.toString().toUpperCase();
+	$(extraSensor).append(sensors);
+
+	var extraStatus = createDiv('extra content');
+	var status = createDiv('description');
+	status.innerHTML = 'Status: ' + alert.status;
+	status.id = alert._id;
+	$(extraStatus).append(status);
+
+	$(card).append(content);
+	$(card).append(extraSensor);
+	$(card).append(extraStatus);
+	$(container).prepend(card);
+
+}
+
 var socket;
 $(document).ready(function() {
 	console.log('inside start manager.js');	
@@ -44,9 +92,12 @@ $(document).ready(function() {
 	socket.emit('register', {id : deviceData.deviceNumber })
 	socket.on('alert', function(alert) {
 		console.log(alert);
-		console.log(alert.date);
-		console.log(alert.time);
+		createAlert(alert);
 	});
+	socket.on('alert-update', function(alert) {
+		console.log(alert);
+		$('#' + alert._id).html('Status: ' + alert.status);
+	})
 
 	console.log('inside end manager.js');
 

@@ -19,6 +19,6 @@ div.ui.bottom.attached.active.tab.segment {
 }
 
 #idk {
-  filter: blur(0);
+  /*filter: blur(0);*/
   -webkit-filter: blur(0);
 }

@@ -654,7 +654,7 @@ function verifyPhone() {
 				 toPost = false;
 			}
 			else if(phoneValid()) {
-				 addErrorPre('Please enter a valid phone number', '#verifyPhone', '#verifyNumber', phoneLen);
+				 addErrorPre('Please enter a valid phone number', '#verifyPhone', '#verifyNumber', phoneValid);
 				 toPost = false;
 			}
 			if(verifyLen()) {

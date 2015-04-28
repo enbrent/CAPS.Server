@@ -45,9 +45,9 @@ exports.sendConfirmationEmail = function(email, confirmToken) {
 exports.sendResetPasswordEmail = function(email, resetToken) {
 
     // var resetLink = 'https://mus.ec/reset/' + resetToken;
-    var resetLink = 'http://5b97ed51.ngrok.com/reset/' + resetToken;
+    var resetLink = 'http://70dfffd2.ngrok.com/reset/' + resetToken;
 
-    var htmlMsg = '<div style="font-size:16px"><b>Password reset for myCAPS</b></div>' +
+    var htmlMsg = '<div style="font-size:16px"><b>Password reset for CAPS Device</b></div>' +
                     '<br>' +
                     '<div>Please click the link below to reset your password:</div>' +
                     '<div><a href=' + resetLink + '>Reset my password</a></div>';

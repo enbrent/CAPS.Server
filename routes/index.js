@@ -71,27 +71,29 @@ get.register = function(req, res) {
     res.render('registertest', { title: 'CAPS Registration' , message: req.flash('message')});
 };
 
-// Might change this later to a post
-get.resetpass = function(req, res) {
+post.resetpass = function(req, res) {
 
-    var email = req.user.email
+    var email = req.body.email
       , resetToken = shortId.generate();
 
-    if(!email) return res.send('Error: email not found');
+    // Check if email is valid.
+    models.User.findOne({'email': email}, function(err, user) {
+        if(err) return res.send({ status: codes.status.FAILED, msg: err , fieldId: '#email'});
+        if(!user) return res.send({ status: codes.status.FAILED, msg: 'No account with email found' , fieldId: '#email'});
+        // Invalidate/delete all existing tokens for the user
+        models.ResetToken.remove({'userId': toId(user._id)}, function(err) {
+            if(err) return res.send({ status: codes.status.FAILED, msg: err , fieldId: '#email'});
+            var rToken = new models.ResetToken();
+            rToken._id = resetToken;
+            rToken.userId = toId(user._id);
+            rToken.save(function(err) {
+                if(err) return res.send({ status: codes.status.FAILED, msg: err , fieldId: '#email'});
+                transmitter.sendResetPasswordEmail(email, resetToken);
+                return res.send({ status: codes.status.OK });
+            })            
+        });
 
-    var rToken = new models.ResetToken();
-    rToken._id = resetToken;
-    rToken.userId = toId(req.user._id);
-
-    if(!rToken.userId) return res.send('must be logged in');
-
-    rToken.save(function(err) {
-        if(err) return res.send(err);
     })
-
-    transmitter.sendResetPasswordEmail(email, resetToken)
-
-    res.render('redirect', { message: "Reset password email sent!" });
 }
 
 get.reset = function(req, res) {
@@ -111,7 +113,8 @@ get.reset = function(req, res) {
             req.login(user, function(err) {
                 if(err) return res.send(err);
             });
-
+            
+            token.remove();
             // Go to reset pass page
             return res.render('changepass');
         });

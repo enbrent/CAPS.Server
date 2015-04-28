@@ -18,21 +18,36 @@ block content
                 p(style='text-align:center; font-size:13px')
                     a(href='/register') Create an account
             p(style='text-align:center; font-size:11px; font-style:italic;')
-                    a(href='/register') Forgot your password?
-            script(type='text/javascript').
-                var errorMessage = !{JSON.stringify(message)};
-                if(errorMessage.length > 0) {
-                    var error = document.createElement('div');
-                    error.className = 'ui negative message';
-                    error.style.fontSize = '12px';
-                    error.style.padding = '8px 1em';
-                    var p = document.createElement('p');
-                    p.innerHTML = errorMessage;
-                    p.style.textAlign = 'center';
-                    error.appendChild(p);
-                    var loginForm = document.getElementById('loginForm');
-                    loginForm.insertBefore(error, loginForm.children[1]);
-                }   
+                    a(id='forgotPassLink') Forgot your password?
+
+    //- EMAIL MODAL
+    div.ui.small.modal(id='forgotPassModal')
+        i.close.icon
+        div.header Change Email
+        div.content(style='padding-top:12px;')
+            div.ui.negative.hidden.message(id='forgotPassError' style='padding: 8px 20px; font-size:12px;')
+                ui.list(id='forgotPassList')
+                    li Hi
+            form.ui.attached.fluid.segment.form
+                div.field(id='emailField')
+                    label Enter your email
+                    input(id='email' name='email' placeholder='Email' type='email' autofocus)
+        div.actions
+            div.ui.positive.green.button(id='resetButton') Reset Password
+    script(type='text/javascript').
+        var errorMessage = !{JSON.stringify(message)};
+        if(errorMessage.length > 0) {
+            var error = document.createElement('div');
+            error.className = 'ui negative message';
+            error.style.fontSize = '12px';
+            error.style.padding = '8px 1em';
+            var p = document.createElement('p');
+            p.innerHTML = errorMessage;
+            p.style.textAlign = 'center';
+            error.appendChild(p);
+            var loginForm = document.getElementById('loginForm');
+            loginForm.insertBefore(error, loginForm.children[1]);
+        }   
 
             
                 

@@ -82,10 +82,10 @@ app.get('/alerts', isAuthenticated, routes.get.alerts);
 // User authentication
 app.get('/register', routes.get.register);
 app.get('/reset/*', routes.get.reset);
-app.get('/resetpass', routes.get.resetpass);
 app.get('/logoff', routes.get.logoff);
 app.get('/textin', routes.get.textin);
 app.post('/login', routes.post.login);
+app.post('/resetpass', routes.post.resetpass);
 app.post('/register', routes.post.register);
 app.post('/sendverifyphone', routes.post.sendverifyphone);
 app.post('/verifyphone', routes.post.verifyphone);

@@ -1,10 +1,15 @@
-extends layout
+extends layout-password
 
 block content
-    h1.title Enter new password
-        div.container
-            form(class='form-changepass', action='/changepass', method='POST')
-                input(type='password', name='password' class='form-control', placeholder='Password',required, autofocus)
-                input(type='password', name='passwordc' class='form-control', placeholder='Confirm Password', required)
-                button(class='btn btn-lg btn-primary btn-block', type='submit') Submit
-        a(href='/register', class='text-center new-account') Create an account
+	div.ui.one.column.centered.grid(style='padding-top:25px')
+		div.column.six.wide(style='min-width:500px')
+			form.ui.attached.fluid.segment.form(method='POST' id='changePassForm')
+				h2 Enter new password
+				div.field(id='passwordField')
+					input(id = 'password' type='password', name='password' placeholder='Password',  autofocus)
+				div.field(id='cpasswordField')
+					input(id = 'cpassword' type='password', name='cpassword' placeholder='Confirm Password')
+				div.ui.fluid.button(id='submitButton') Submit
+				div.ui.hidden.negative.message(id='errorMessage')
+					ul.list(id='errorList' style='font-size:12px;')
+			a(href='/home' style='font-size:16px') Home

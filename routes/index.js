@@ -53,6 +53,20 @@ get.home = function(req, res) {
     });  
 }
 
+get.alerts = function(req, res) {
+    models.User.findById(req.user._id, function(err, user) {
+        if(err) return res.send(err);
+        models.Alert.find({'deviceNumber': user.deviceNumber}, function(err, alerts) {
+            if(err) return res.send(err);
+            res.render('alerts', {
+                title: 'CAPS Alerts',
+                user: user,
+                alerts: alerts
+            })
+        })
+    })
+}
+
 get.register = function(req, res) {
     res.render('registertest', { title: 'CAPS Registration' , message: req.flash('message')});
 };

@@ -78,6 +78,7 @@ app.get('/ping', routes.get.ping);
 // Main pages
 app.get('/', userLoggedIn, routes.get.index);
 app.get('/home', isAuthenticated, routes.get.home);
+app.get('/alerts', isAuthenticated, routes.get.alerts);
 // User authentication
 app.get('/register', routes.get.register);
 app.get('/reset/*', routes.get.reset);

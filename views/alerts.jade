@@ -9,12 +9,12 @@ block content
 			div.text.item(id='nameMenu') #{user.firstName} #{user.lastName}
 			a.item(href='/logoff')
 				<i class="sign out icon"></i>
-	div.container(style='width:800px; position:relative; margin:0px auto' id='alertsContainer')
+	div.container(style='width:800px; position:relative; margin:0px auto; padding-top:20px' id='alertsContainer')
 		div.ui.icon.message(id='noAlert')
 			i.smile.icon
 			div.content
 				div.header Good news!
-				p There are no errors yet.
+				p There are no alerts yet.
 
 	script(type='text/javascript').
 		var userData = !{JSON.stringify(user)};

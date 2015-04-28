@@ -124,9 +124,10 @@ $(document).ready(function() {
 		// case 2: priority update
 
 		deviceData = device;
-		if(!populated) {
-			removeAndStart();
-		}
+		// if(!populated) {
+		// 	removeAndStart();
+		// }
+		removeAndStart();
 		$('#notSyncedWarning').remove();
 	})
 
@@ -395,6 +396,8 @@ function createSensorList() {
 	var uiDropdown = createDropdown(sensorCount);
 
 	var sensorForm = document.getElementById('updateSensorForm');
+
+	$(sensorForm).empty();
 
 	/// Create warning message that device is not synced.
 	if(!isSynced) {

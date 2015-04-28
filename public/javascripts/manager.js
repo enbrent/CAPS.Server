@@ -3,6 +3,12 @@ var codes = {
     'OK' : '0'
 };
 
+var dateOptions = {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric'
+}
+
 var pChange = 0;
 var sCount = 0;
 var updateButtonChanged = false;
@@ -39,15 +45,16 @@ var updateButton = function() {
 //         div.description Status: Waiting for code
 
 function createAlert(alert) {
-	var container = $('#alertContainer');
-	var card = createDiv('ui fluid card');
 
+	var container = $('#alertContainer');
+	var card = createDiv('ui fluid blue card');
+	var date = new Date(alert.date);
 	var content = createDiv('content');
 	var header = createDiv('header');
-	header.innerHTML = alert.date;
+	header.innerHTML = date.toLocaleDateString('en-us', dateOptions);
 	var meta = createDiv('meta');
 	var time = document.createElement('span');
-	time.innerHTML = alert.time;
+	time.innerHTML = date.toLocaleTimeString();
 	var loc = document.createElement('a');
 	$(loc).addClass('span right floated');
 	$(loc).attr('href', 'http://maps.google.com');
@@ -59,7 +66,7 @@ function createAlert(alert) {
 
 	var extraSensor = createDiv('extra content');
 	var sensors = document.createElement('span');
-	sensors.innerHTML = alert.sensors.toString().toUpperCase();
+	sensors.innerHTML = alert.sensors.join(', ').toUpperCase();
 	$(extraSensor).append(sensors);
 
 	var extraStatus = createDiv('extra content');
@@ -71,7 +78,17 @@ function createAlert(alert) {
 	$(card).append(content);
 	$(card).append(extraSensor);
 	$(card).append(extraStatus);
+	if($('#noAlert')) {
+		$('#noAlert').remove();
+	}
 	$(container).prepend(card);
+	if($(container).children().eq(1)) {
+		$(container).children().eq(1).attr('class', 'ui fluid card');
+	}
+	// Only allow 3 alert cards to be displayed
+	if($(container).children().eq(3)) {
+		$(container).children().eq(3).remove();
+	}
 
 }
 
@@ -80,6 +97,7 @@ $(document).ready(function() {
 	console.log('inside start manager.js');	
 
 	console.log(deviceData);
+	console.log(alertsData);
 
 	if(!userData.phoneVerified) {
 		verifyPhone();
@@ -112,7 +130,11 @@ function start() {
 	});	
 	// Check if data is activated.
 	if(deviceData.isActivated) {
-		createSensorList();		
+		createSensorList();
+		if(alertsData.length > 0) {
+			createAlertsList();	
+		}
+		
 	} else {
 		// Inform that device not activated.
 		var msg = createDiv('ui negative message');
@@ -307,6 +329,18 @@ function errorInModal(id, msg) {
 	$(id).children('p').get(0).innerHTML = msg;
     $(id).removeClass('hidden');
     return null;
+}
+
+function createAlertsList() { 
+	// // Only display the 3 last/latest alerts
+	// for(var k = 0; k < alertsData.length; k += 1) {
+	// 	createAlert(alertsData[k]);
+	// }
+	// Only display the 3 latest alerts
+	var length = Math.min(3, alertsData.length);
+	for(var k = alertsData.length - length; k < alertsData.length; k += 1) {
+		createAlert(alertsData[k]);
+	}
 }
 
 // Create semantic-ui segments for each sensor

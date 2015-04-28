@@ -13,22 +13,14 @@ block content
         div.column.three.wide
             div.ui.top.attached.tabular.menu.three.item
                 div.active.item(data-tab="sensor") Sensors
-                div.item(data-tab="alert") Alerts
+                div.item(data-tab="alert") Recent Alerts
                 div.item(data-tab="account") Account
             div.ui.bottom.attached.active.tab.segment(data-tab="sensor" id="sensorTab")
                 form.ui.form(id='updateSensorForm' method='POST' action='/changepriority')
             div.ui.bottom.attached.tab.segment(data-tab="alert")
-                div.container(id='alertContainer')
-                    div.ui.fluid.card
-                        div.content
-                            div.header March 20, 2015
-                            div.meta
-                                span 12:56 PM
-                                a.span.right.floated(href='http://maps.google.com') Location
-                        div.extra.content
-                            span PROXIMITY, MOTION, C02, TEMPERATURE
-                        div.extra.content
-                            div.description Status: Waiting for code
+                div.container(id='alertContainer' style='padding-bottom:12px')
+                    p(id='noAlert') No alerts yet!
+                a.ui.right.floated.button View all alerts
             div.ui.bottom.attached.tab.segment(data-tab="account")
                 div.ui.divided.very.relaxed.list
                     div.item
@@ -204,3 +196,4 @@ block content
     script(type='text/javascript').
         var userData = !{JSON.stringify(user)};
         var deviceData = !{JSON.stringify(device)};
+        var alertsData = !{JSON.stringify(alerts)};

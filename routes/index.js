@@ -39,11 +39,16 @@ get.home = function(req, res) {
         if(err) return res.send(err);
         models.Device.findById(user.deviceId, function(err, device) {
             if(err) return res.send(err);
-            res.render('home', {
-                title: 'CAPS Manager',
-                user: user,
-                device: device
-            });
+            models.Alert.find({'deviceNumber': device.deviceNumber}, function(err, alerts) {
+                if(err) return res.send(err);
+                res.render('home', {
+                    title: 'CAPS Manager',
+                    user: user,
+                    device: device,
+                    alerts: alerts
+                });    
+            })
+            
         });
     });  
 }
@@ -482,18 +487,9 @@ post.reply = function(req, res) {
 
                         alert.save(function(err) { 
                             if(err) return transmitter.sendDeviceText(phoneNum, err);
-                            var sensorString = '';
-                            for(var k = 0; k < s_array.length; k += 1) {
-                                sensorString += s_array[k];
-                                if(k != s_array.length - 1) sensorString += ', ';
-                            }
-                            message = 'This is a CAPS Device alert. Your ' + sensorString +'sensor(s) has picked up something inside your car. ';
+                            message = 'This is a CAPS Device alert. Your ' + s_array.join(', ') +'sensor(s) has picked up something inside your car. ';
                             message += 'Please reply this code to confirm this alert: ' + alert.token;
-                            var msg = alert.toJSON();
-                            msg.date = alert.date.toDateString();
-                            msg.time = alert.date.toTimeString();
-                            msg.sensors = sensorString;
-                            emitter.emit('alert', {userId: device.deviceNumber, msg: msg});
+                            emitter.emit('alert', {userId: device.deviceNumber, msg: alert.toJSON()});
                             transmitter.sendAlertText(user.phoneNumber, message, user.emergencyNumber, alert.token );
                             console.log('Text message sent');
                             // res.send('Text message sent');

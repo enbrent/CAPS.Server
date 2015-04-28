@@ -15,7 +15,7 @@ module.exports.init = function(socketio) {
 }
 
 module.exports.emit = function(arg, data) {
-	console.log(data);
+	//console.log(data);
 	if(users[data.userId]) {
 		// var length = users[data.userId].length;
 		for(var k = 0; k < users[data.userId].length; k += 1) {
@@ -38,7 +38,6 @@ module.exports.emit = function(arg, data) {
 }
 
 var emitAlert = function(data) {
-	console.log(users[data.userId]);
 	console.log('inside emit alert'); 
 	// Only emit when there are users connected to it
 	if(users[data.userId]) {

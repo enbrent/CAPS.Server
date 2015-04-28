@@ -323,24 +323,6 @@ function registerUpdateModals() {
     	return ephoneNum;
     })
 
-    registerModal('#editEPhone', { name: 'emergency', id: '#userEmergency' }, function() {
-    	var ephoneNum = $('#emergencyNumber').intlTelInput('getNumber')
-    	  , toPost = true;
-
-		if(ephoneLen()) {
-			addErrorPre('Please enter your emergency number', '#editEPhone', '#emergencyNumber', ephoneLen);
-			toPost = false;
-		} else if(ephoneVal()) {
-			addErrorPre('Please enter a valid phone number', '#editEPhone', '#emergencyNumber', ephoneVal);
-			toPost = false;
-		} else if(ephoneSame()) {
-			addErrorPre('This number is your current emergency number', '#editEPhone', '#emergencyNumber', ephoneSame);
-			toPost = false;
-		}
-		if(!toPost) return null;
-    	return ephoneNum;
-    });
-
   	registerModal('#editDevice', { name: 'device', id: '#userDevice' }, function() {
   		var deviceId = $('#deviceId').val()
   		  , toPost = true;
@@ -565,10 +547,9 @@ function registerModal(id, info, getData) {
 					if(toPost) {
 						$.post('/sendverifyphone', { phone: $('#currentNumber').intlTelInput('getNumber')}, function(data, stat, xhr) {
 							if(data.status == codes.FAIL) {
-								// errorInModal('#verifyPhoneError', data.msg);
 								addError(id, '#currentNumber', data.msg);
 								$(errorId).removeClass('hidden');
-							}
+							} 
 						});						
 					} else {
 						$(errorId).removeClass('hidden');

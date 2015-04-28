@@ -136,6 +136,8 @@ $(document).ready(function() {
 }); 
 
 function removeAndStart() {
+	pChange = 0;
+	updateButtonChanged = false;
 	if($('#deviceNotActivated')) {
 		$('#deviceNotActivated').remove();
 	}	

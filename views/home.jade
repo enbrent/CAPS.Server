@@ -20,7 +20,7 @@ block content
             div.ui.bottom.attached.tab.segment(data-tab="alert")
                 div.container(id='alertContainer' style='padding-bottom:12px')
                     p(id='noAlert') No alerts yet!
-                a.ui.right.floated.button(href='/alerts') View all alerts
+                a.hidden.ui.right.floated.disabled.button(id='viewAlerts' href='/alerts') View all alerts
             div.ui.bottom.attached.tab.segment(data-tab="account")
                 div.ui.divided.very.relaxed.list
                     div.item

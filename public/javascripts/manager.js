@@ -81,6 +81,7 @@ function createAlert(alert) {
 	if($('#noAlert')) {
 		$('#noAlert').remove();
 	}
+	$('#viewAlerts').removeClass('disabled');
 	$(container).prepend(card);
 	if($(container).children().eq(1)) {
 		$(container).children().eq(1).attr('class', 'ui fluid card');
@@ -116,10 +117,39 @@ $(document).ready(function() {
 		console.log(alert);
 		$('#' + alert._id).html('Status: ' + alert.status);
 	})
+	// Event emitted when device reset button is pressed
+	socket.on('reset', function(device) {
+		// 2 event catches
+		// case 1: init
+		// case 2: priority update
+
+		deviceData = device;
+		if(!populated) {
+			removeAndStart();
+		}
+		$('#notSyncedWarning').remove();
+	})
 
 	console.log('inside end manager.js');
 
 }); 
+
+function removeAndStart() {
+	if($('#deviceNotActivated')) {
+		$('#deviceNotActivated').remove();
+	}	
+	createSensorList();
+	if(alertsData.length > 0) {
+		createAlertsList();	
+	}
+	// Initialize dropdown priorities for sensors
+	$('.dropdown').dropdown({
+	 transition: 'drop',
+	 onChange: updateButton
+	});
+}
+
+var populated = false;
 
 function start() {
 	
@@ -130,11 +160,12 @@ function start() {
 	});	
 	// Check if data is activated.
 	if(deviceData.isActivated) {
+		populated = true;
 		createSensorList();
 		if(alertsData.length > 0) {
 			createAlertsList();	
 		}
-		
+
 	} else {
 		// Inform that device not activated.
 		var msg = createDiv('ui negative message');
@@ -145,7 +176,9 @@ function start() {
 
 		msg.appendChild(hdr);
 		msg.appendChild(content);
+		$(msg).attr('id', 'deviceNotActivated');
 		document.getElementById('updateSensorForm').appendChild(msg);
+		populated = false;
 	}
 
 	// Initialize dropdown priorities for sensors
@@ -372,6 +405,7 @@ function createSensorList() {
         p.style.textAlign = 'left';
         error.appendChild(p);
         // document.body.appendChild(error);
+        $(error).attr('id', 'notSyncedWarning');
         sensorForm.appendChild(error);
     }  
 

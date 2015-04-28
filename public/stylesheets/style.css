@@ -17,3 +17,8 @@ div.ui.bottom.attached.active.tab.segment {
 .negative.button {
     background-color: #4E446C !important;
 }
+
+#idk {
+  filter: blur(0);
+  -webkit-filter: blur(0);
+}

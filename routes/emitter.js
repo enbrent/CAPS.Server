@@ -1,5 +1,5 @@
 var io
-  , users = {};
+  , users = {}; // users connected
 module.exports.init = function(socketio) {
 	io = socketio;
 	io.on('connection', function(socket) {
@@ -20,7 +20,7 @@ module.exports.emit = function(arg, data) {
 		// var length = users[data.userId].length;
 		for(var k = 0; k < users[data.userId].length; k += 1) {
 			var to = users[data.userId][k];
-			// console.log('inside emit alert: ' + k);
+			// Check if connection is still valid
 			var connection = io.sockets.connected[to];
 			if(!connection) {
 				console.log('invalid connection detected, deleting..');
@@ -30,6 +30,7 @@ module.exports.emit = function(arg, data) {
 				// io.sockets.connected[to].emit('alert', data.msg);	
 				if(arg == 'alert') io.sockets.connected[to].emit('alert', data.msg);
 				else if(arg == 'alert-update') io.sockets.connected[to].emit('alert-update', data.msg);
+				else if(arg == 'reset') io.sockets.connected[to].emit('reset', data.msg);
 			}
 			
 		}

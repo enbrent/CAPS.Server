@@ -1,10 +1,8 @@
 extends layout
 
 block content
-    div.ui.one.column.centered.grid(style='position:relative; top:50%; transform:translateY(-50%);')
+    div.ui.one.column.centered.grid(id='idk' style='position:relative; top:50%; transform:translateY(-50%);')
         div.column.four.wide(id='loginPage' style='min-width:330px')
-            //- div.ui.message
-            //-     div.header(style='text-align:center') #{message}
             form.ui.attached.fluid.segment.form(action='/login' method='POST' id='loginForm')
                 h1(class='ui center aligned header') CAPS Device
                 div.field

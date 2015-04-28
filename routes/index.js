@@ -445,6 +445,7 @@ post.reply = function(req, res) {
                     device.save(function(err) {
                         // if(err) return res.send('Error on updating device');
                         if(err) return transmitter.sendDeviceText(phoneNum, 'Error on updating device');
+                        emitter.emit('reset', {userId: device.deviceNumber, msg: device.toJSON()});
                     })
 
                     // Construct response.

@@ -509,7 +509,7 @@ post.reply = function(req, res) {
                             message += 'Please reply this code to confirm this alert: ' + alert.token;
                             emitter.emit('alert', {userId: device.deviceNumber, msg: alert.toJSON()});
                             transmitter.sendAlertText(user.phoneNumber, message, user.emergencyNumber, alert.token );
-                            transmitter sendDeviceText(phoneNum, 'Text message sent');
+                            transmitter.sendDeviceText(phoneNum, 'Text message sent');
                             console.log('Text message sent');
                             // res.send('Text message sent');
                         });

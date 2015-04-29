@@ -107,7 +107,7 @@ $(document).ready(function() {
 	}
 
 	// Register for socket.io
-	socket = io.connect('http://localhost');
+	socket = io.connect('http://caps.pagekite.me');
 	socket.emit('register', {id : deviceData.deviceNumber })
 	socket.on('alert', function(alert) {
 		console.log(alert);

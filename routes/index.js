@@ -242,7 +242,8 @@ get.rgs = function(req, res) {
 
         // Sort priorities for shifting.
         var p_array = []
-          , f_array = [];
+          , f_array = []
+          , r_array = []; // shifted priority array for response
 
         // Get values.
         for(var sensor in priorities) {
@@ -252,14 +253,25 @@ get.rgs = function(req, res) {
         p_array.sort(function(a,b) { return a[1]-b[1]} );
 
         var pr = 0;
+        var old = 0;
         for(var i = 0; i < p_array.length; i += 1) {
             // Remove "removed-state" sensors (AKA the ones not requested).
             if(p_array[i][1] != -1) { 
                 // Shift priorities: temp=1, cap=3 --> temp=1, cap=2
-                p_array[i][1] = p_array[i][1] != pr ? ++pr : pr;
+                console.log('p_arr='+p_array[i][1] +' pr:'+pr);
+                // p_array[i][1] = (p_array[i][1] != pr) ? ++pr : pr;
+                if(p_array[i][1] != pr && p_array[i][1] != old) {
+                    old = p_array[i][1];
+                    p_array[i][1] = ++pr;
+                } else {
+                    old = p_array[i][1];
+                    p_array[i][1] = pr;
+                }
+
                 f_array.push(p_array[i]);
                 // Update actual priority object.
-                priorities[p_array[i][0]] = p_array[i][1];
+                // priorities[p_array[i][0]] = p_array[i][1];
+                r_array[p_array[i][0]] = p_array[i][1];
             }
         }
 
@@ -277,7 +289,8 @@ get.rgs = function(req, res) {
 
         for(var i = 0; i < numSensor; i += 1) {
             var sNum = "s" + i.toString();
-            response += i + "=" + priorities[sensors[sNum]];
+            // response += i + "=" + priorities[sensors[sNum]];
+            response += i + "=" + r_array[sensors[sNum]];
             if(i != numSensor - 1) { response += ":"; }
         }
 
@@ -368,7 +381,7 @@ post.reply = function(req, res) {
                 })
             });
         } else {
-            var args = content.split('.');
+
             if(args[0] == 'rgs') {
                 console.log(args);
                 // Do registration stuff
@@ -419,7 +432,8 @@ post.reply = function(req, res) {
 
                     // Sort priorities for shifting.
                     var p_array = []
-                      , f_array = [];
+                      , f_array = []
+                      , r_array = []; // shifted priority array for response
 
                     // Get values.
                     for(var sensor in priorities) {
@@ -428,15 +442,24 @@ post.reply = function(req, res) {
 
                     p_array.sort(function(a,b) { return a[1]-b[1]} );
 
-                    var pr = 0;
+                    var pr = 0
+                      , old = 0;
                     for(var i = 0; i < p_array.length; i += 1) {
                         // Remove "removed-state" sensors (AKA the ones not requested).
                         if(p_array[i][1] != -1) { 
                             // Shift priorities: temp=1, cap=3 --> temp=1, cap=2
-                            p_array[i][1] = p_array[i][1] != pr ? ++pr : pr;
+                            // p_array[i][1] = p_array[i][1] != pr ? ++pr : pr;
+                            if(p_array[i][1] != pr && p_array[i][1] != old) {
+                                old = p_array[i][1];
+                                p_array[i][1] = ++pr;
+                            } else {
+                                old = p_array[i][1];
+                                p_array[i][1] = pr;
+                            }
                             f_array.push(p_array[i]);
                             // Update actual priority object.
-                            priorities[p_array[i][0]] = p_array[i][1];
+                            // priorities[p_array[i][0]] = p_array[i][1];
+                            r_array[p_array[i][0]] = p_array[i][1];
                         }
                     }
 
@@ -456,7 +479,8 @@ post.reply = function(req, res) {
 
                     for(var i = 0; i < numSensor; i += 1) {
                         var sNum = "s" + i.toString();
-                        response += i + "=" + priorities[sensors[sNum]];
+                        // response += i + "=" + priorities[sensors[sNum]];
+                        response += i + "=" + r_array[sensors[sNum]];
                         if(i != numSensor - 1) { response += ":"; }
                     }
 

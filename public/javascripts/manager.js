@@ -355,6 +355,8 @@ function createAlertsList() {
 	// 	createAlert(alertsData[k]);
 	// }
 	// Only display the 3 latest alerts
+	// Clear before adding
+	$('#alertContainer').empty();
 	var length = Math.min(3, alertsData.length);
 	for(var k = alertsData.length - length; k < alertsData.length; k += 1) {
 		createAlert(alertsData[k]);
@@ -520,6 +522,7 @@ function registerModal(id, info, getData) {
             transition: 'fade up',
             onHide: function() {
                 (function() {
+                	if(id == '#editPhone') $('#editPhoneText').html('Send');
                     $(errorId).addClass('hidden');
                     $(modalId).find(':input').each(function() {
                         jQuery(this).val('');
@@ -532,6 +535,7 @@ function registerModal(id, info, getData) {
             onDeny: function() {
             	// console.log('inside onDeny for some reason');
             	if(id == '#editPhone') {
+            		$('#editPhoneText').html('Send');
 	            	$(modalId).find('.field').each(function() {
 	                    	jQuery(this).removeClass('error');
 	                })
@@ -547,12 +551,17 @@ function registerModal(id, info, getData) {
 					}
 					if(toPost) {
 						// console.log('inside toPost');
+						$('#editPhoneText').addClass('loading');
 						$.post('/sendverifyphone', { phone: $('#currentNumber').intlTelInput('getNumber')}, function(data, stat, xhr) {
 							// console.log('inside edit phone after edit phone');
+							$('#editPhoneText').removeClass('loading');
 							if(data.status == codes.FAIL) {
+								$('#editPhoneText').html('Send');
 								addError(id, '#currentNumber', data.msg);
 								$(errorId).removeClass('hidden');
-							} 
+							} else {
+								$('#editPhoneText').html('Sent!');
+							}
 						});						
 					} else {
 						$(errorId).removeClass('hidden');

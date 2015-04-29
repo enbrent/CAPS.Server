@@ -369,6 +369,7 @@ post.reply = function(req, res) {
             });
         } else {
             var args = content.split('.');
+            console.log(args);
             if(args[0] == 'rgs') {
                 console.log(args);
                 // Do registration stuff
@@ -461,7 +462,7 @@ post.reply = function(req, res) {
                     }
 
                     console.log(response);
-                    response = 'WORD' + response;
+                    response = 'WORD' + response + ':';
                     if(device.sensors == null) return transmitter.sendDeviceText(phoneNum, '0');
                     else return transmitter.sendDeviceText(phoneNum, response);
                 });

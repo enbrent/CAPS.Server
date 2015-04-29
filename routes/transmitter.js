@@ -83,7 +83,7 @@ exports.sendAlertText = function(number, toSend, enumber, token) {
     //var callUrl = '../public/call.xml';
     //var callUrl = '../other/call.xml';
     // var callUrl = 'http://localhost/call.xml';
-    var callUrl = 'http://70dfffd2.ngrok.com/call.xml';
+    var callUrl = 'http://caps.pagekite.me/call.xml';
      
     client.messages.create({ 
         to: number, 

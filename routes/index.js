@@ -578,9 +578,10 @@ post.sendverifyphone = function(req, res) {
                         if(err) return res.send({ status: codes.status.FAIL, msg: err });
 
                         var msg = 'This is a message to verify your CAPS device account. Please enter this code in your account page: ';
-                        msg += phoneToken.token;
+                        msg += phoneToken.token; 
 
                         transmitter.sendVerifyText(phoneNum, msg);    
+                        return res.send({ status: codes.status.OK });
                     })
                 })              
             })
@@ -601,7 +602,8 @@ post.sendverifyphone = function(req, res) {
                     var msg = 'This is a message to verify your CAPS device account. Please enter this code in your account page: ';
                     msg += phoneToken.token;
 
-                    transmitter.sendVerifyText(phoneNum, msg);    
+                    transmitter.sendVerifyText(phoneNum, msg);
+                    return res.send({ status: codes.status.OK });;
                 })
             }) 
         }
@@ -651,7 +653,7 @@ post.changepass = function(req, res) {
         user.password = newpw;
         user.save(function(err) {
             if(err) return res.send('Error in changing password');
-            res.send('password changed!');
+            return res.send('password changed!');
         })
 
     })
@@ -684,7 +686,7 @@ post.changepriority = function(req, res) {
 
         device.save(function(err) {
             if(err) return res.send(err);
-            res.redirect('/home');
+            return res.redirect('/home');
         })
     });
 }

@@ -530,6 +530,7 @@ function registerModal(id, info, getData) {
                 })();
             },
             onDeny: function() {
+            	// console.log('inside onDeny for some reason');
             	if(id == '#editPhone') {
 	            	$(modalId).find('.field').each(function() {
 	                    	jQuery(this).removeClass('error');
@@ -542,10 +543,12 @@ function registerModal(id, info, getData) {
 						toPost = false;
 					} else if(cphoneVal()) {
 						addErrorPre('Please enter a valid phone number', '#editPhone', '#currentNumber', cphoneVal);
-						toPost = false;
+						toPost = false;  
 					}
 					if(toPost) {
+						// console.log('inside toPost');
 						$.post('/sendverifyphone', { phone: $('#currentNumber').intlTelInput('getNumber')}, function(data, stat, xhr) {
+							// console.log('inside edit phone after edit phone');
 							if(data.status == codes.FAIL) {
 								addError(id, '#currentNumber', data.msg);
 								$(errorId).removeClass('hidden');
@@ -554,7 +557,6 @@ function registerModal(id, info, getData) {
 					} else {
 						$(errorId).removeClass('hidden');
 					}
-
             	}
                 return false;
             },
@@ -614,8 +616,11 @@ function registerModal(id, info, getData) {
 
 function verifyPhone() {
 
+
+	console.log('inside beginning of verifyphone');
 	$.post('/sendverifyphone', { phone: userData.phoneNumber}, function(data, stat, xhr) {
 		console.log(data);
+		// console.log('isnide sendverifyphone before verifyphone');
 	});
 
 	$('#verifyNumber').val(userData.phoneNumber);
@@ -677,6 +682,7 @@ function verifyPhone() {
 			if(toPost) {
 			// Resend
 				$.post('/sendverifyphone', { phone: $('#verifyNumber').intlTelInput('getNumber')}, function(data, stat, xhr) {
+					// console.log('inside sendverifyphone after verifyphone');
 					if(data.status == codes.FAIL) {
 						errorInModal('#verifyPhoneError', data.msg);
 					}

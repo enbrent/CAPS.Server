@@ -14,7 +14,7 @@ var transporter = nodemailer.createTransport({
 exports.sendConfirmationEmail = function(email, confirmToken) {
 
     // var activationLink = 'https://mus.ec/verify/' + confirmToken;
-    var activationLink = 'http://5b97ed51.ngrok.com/verify/' + confirmToken;
+    var activationLink = 'http://caps.pagekite.me/verify/' + confirmToken;
 
     var htmlMsg = '<div style="font-size:16px"><b>Welcome to myCAPS!</b></div>' +
                     '<br>' +
@@ -45,7 +45,7 @@ exports.sendConfirmationEmail = function(email, confirmToken) {
 exports.sendResetPasswordEmail = function(email, resetToken) {
 
     // var resetLink = 'https://mus.ec/reset/' + resetToken;
-    var resetLink = 'http://70dfffd2.ngrok.com/reset/' + resetToken;
+    var resetLink = 'http://caps.pagekite.me/reset/' + resetToken;
 
     var htmlMsg = '<div style="font-size:16px"><b>Password reset for CAPS Device</b></div>' +
                     '<br>' +
